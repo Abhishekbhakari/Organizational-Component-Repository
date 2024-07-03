@@ -4,9 +4,9 @@ const { getComponents, getComponentById, createComponent, updateComponent, delet
 const auth = require('../middleware/auth');
 
 // Define routes
-router.get('/', getComponents);
-router.get('/:id', getComponentById);
-router.post('/', auth, createComponent);
+router.get('/', auth, getComponents);
+router.get('/:id', auth, getComponentById);
+router.post('/', auth, checkAdminRole, createComponent); // Add checkAdminRole middleware
 router.put('/:id', auth, updateComponent);
 router.delete('/:id', auth, deleteComponent);
 

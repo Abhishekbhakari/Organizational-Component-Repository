@@ -1,42 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { getComponents, addComponent, modifyComponent } from '../services/componentService';
+import { addComponent } from '../services/componentService';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminDashboard = () => {
-  const [components, setComponents] = useState([]);
-  const [newComponent, setNewComponent] = useState({ name: '', use: '', technologies: '', tags: '' });
+  const [componentData, setComponentData] = useState({
+    name: '',
+    use: '',
+    technologies: '',
+    tags: [],
+  });
+  const [userRole, setUserRole] = useState(null); // To store the user's role
+  const navigate = useNavigate();
+useEffect(() => {
+  const fetchUserRole = async () => {
+    try {
+      // ... (token retrieval)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getComponents('');
-        setComponents(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error fetching components:', error);
-        setComponents([]);
-      }
-    };
-    fetchData();
-  }, []);
-
+      const response = await axios.get('/api/auth/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('API Response:', response.data); // Log the response
+      setUserRole(response.data.role); // Access the role from the response
+    } catch (error) {
+      // ...
+    }
+  };
+  fetchUserRole();
+}, [navigate]);
+  const handleModifyComponent = (e) => {
+    setComponentData({ ...componentData, [e.target.name]: e.target.value });
+  };
   const handleAddComponent = async (e) => {
     e.preventDefault();
     try {
-      const data = await addComponent(newComponent);
-      setComponents([...components, data]);
-      setNewComponent({ name: '', use: '', technologies: '', tags: '' });
+      await addComponent(componentData);
+      // Handle success, maybe clear the form, etc.
+      console.log('Component added successfully!');
     } catch (error) {
       console.error('Error adding component:', error);
     }
   };
-
-  const handleModifyComponent = async (id, updatedComponent) => {
-    try {
-      const data = await modifyComponent(id, updatedComponent);
-      setComponents(components.map(comp => (comp._id === id ? data : comp)));
-    } catch (error) {
-      console.error('Error modifying component:', error);
-    }
-  };
+  // Redirect if the user is not an admin
+  if (userRole !== 'admin') {
+    return (
+      <div>
+        <h1>You do not have permission to access this page.</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">

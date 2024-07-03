@@ -1,26 +1,27 @@
 import axios from 'axios';
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth/';
-
-const getAuthToken = () => localStorage.getItem('token');
-
+// Single function to get the token
+const getToken = () => localStorage.getItem('token');
+// Axios instance with headers for authorization
 const instance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'x-auth-token': getAuthToken(),
+    'Authorization': `Bearer ${getToken()}`, // Use the single getToken() function
   },
 });
-
 export const addComponent = async (componentData) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.post('/components', componentData, {
-      headers: {
-        'x-auth-token': token,
-      },
-    });
+    // Always use getToken() to fetch the token
+    const token = getToken();
+    if (!token) {
+      // Handle case where no token is present, 
+      // potentially redirect to login
+      console.error("No authentication token found. User may need to log in.");
+      return;
+    }
+    const response = await instance.post('/components', componentData);
     return response.data;
   } catch (error) {
     console.error('Error adding component:', error);

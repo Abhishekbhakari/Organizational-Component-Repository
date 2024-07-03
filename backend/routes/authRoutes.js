@@ -102,15 +102,15 @@ router.post(
   }
 );
 
-// Get current user
 router.get('/', auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+    try {
+      const user = await User.findById(req.user.id).select('-password'); // Fetch user
+      console.log('Sending user data:', user); // Log user data
+      res.json({ id: user.id, role: user.role }); // Include 'role' in response
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
 
 module.exports = router;
