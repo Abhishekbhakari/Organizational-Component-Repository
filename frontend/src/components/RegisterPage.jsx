@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../services/authService';
-import '../App.css'; // Ensure this path is correct for your project structure
+import '../App.css'; 
 
 const RegisterPage = ({ setAuth }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('employee'); // Default role to 'employee'
+  const [role, setRole] = useState('employee'); 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

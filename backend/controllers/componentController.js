@@ -1,8 +1,23 @@
 const Component = require('../models/Component');
 
 exports.getComponents = async (req, res) => {
+  const searchTerm = req.query.search;
+
   try {
-    const components = await Component.find();
+    let components;
+    if (searchTerm) {
+      const searchRegex = new RegExp(searchTerm, 'i'); // 'i' makes it case insensitive
+      components = await Component.find({
+        $or: [
+          { name: searchRegex },
+          { use: searchRegex },
+          { technologies: searchRegex },
+          { tags: searchRegex },
+        ],
+      });
+    } else {
+      components = await Component.find();
+    }
     res.json(components);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });

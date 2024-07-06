@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { getComponents } from '../services/componentService';
-import '../App.css'; // Ensure this path is correct for your project structure
-
+import '../App.css'; 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [components, setComponents] = useState([]);
@@ -14,7 +13,7 @@ const SearchPage = () => {
       setError('');
     } catch (error) {
       setError('Error fetching components');
-      setComponents([]); // Clear components on error
+      setComponents([]);
     }
   };
 

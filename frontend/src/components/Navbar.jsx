@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css'; // Ensure this path is correct for your project structure
+import '../App.css';
 
 const Navbar = ({ isAuth, setAuth }) => {
   const handleLogout = () => {
