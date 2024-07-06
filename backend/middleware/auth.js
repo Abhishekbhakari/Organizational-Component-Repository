@@ -9,7 +9,7 @@ const checkAdminRole = (req, res, next) => {
   }
 };
 
-module.exports = function (req, res, next) {
+const auth = function(req, res, next) {
   const token = req.header('Authorization');
   if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
 
@@ -21,3 +21,5 @@ module.exports = function (req, res, next) {
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };
+
+module.exports = {auth, checkAdminRole };

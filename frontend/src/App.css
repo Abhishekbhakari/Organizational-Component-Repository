@@ -36,3 +36,95 @@ th, td {
   padding: 1rem;
   text-align: left;
 }
+.glass-button {
+  @apply px-6 py-3 text-lg font-medium rounded-lg relative overflow-hidden;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.glass-button:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+              radial-gradient(circle, rgba(128, 0, 128, 0.5), transparent),
+              radial-gradient(circle, rgba(128, 0, 128, 0.5), transparent),
+              linear-gradient(135deg, #000000, #434343);
+  background-blend-mode: overlay, overlay, multiply;
+}
+
+.glass-form, .glass-card, .glass-table {
+  @apply p-4 mb-4 rounded-lg relative overflow-hidden;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-input {
+  @apply w-full p-2 mb-2 border border-gray-300 rounded-lg;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.crazy-navbar {
+  @apply relative overflow-hidden w-full bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white shadow-lg;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.crazy-link {
+  @apply text-white text-lg font-semibold relative;
+  transition: color 0.3s ease, background 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+}
+
+.crazy-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.crazy-link:hover::before {
+  opacity: 1;
+}
+
+.crazy-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  color: #fffb;
+}
+
+.auth-form {
+  max-width: 400px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-form::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, rgba(29, 78, 216, 0.4), rgba(236, 72, 153, 0.4));
+  z-index: -1;
+  filter: blur(10px);
+}

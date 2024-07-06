@@ -1,11 +1,11 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import User, { findOne } from '../models/User';
+import { genSalt, hash, compare } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
 
-exports.register = async (req, res) => {
+export async function register(req, res) {
   const { username, password, role } = req.body;
   try {
-    let user = await User.findOne({ username });
+    let user = await findOne({ username });
     if (user) return res.status(400).json({ msg: 'User already exists' });
 
     user = new User({
@@ -14,32 +14,32 @@ exports.register = async (req, res) => {
       role,
     });
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    const salt = await genSalt(10);
+    user.password = await hash(password, salt);
     await user.save();
 
     const payload = { user: { id: user.id } };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+    sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
   }
-};
+}
 
 
-exports.login = async (req, res) => {
+export async function login(req, res) {
   const { username, password } = req.body;
   try {
-    let user = await User.findOne({ username });
+    let user = await findOne({ username });
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
     const payload = { user: { id: user.id } };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+    sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
@@ -47,5 +47,5 @@ exports.login = async (req, res) => {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });
   }
-};
+}
 

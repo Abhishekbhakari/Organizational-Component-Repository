@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { addComponent } from '../services/componentService';
+import { addComponent, getComponents } from '../services/componentService';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getCurrentUser } from '../services/authService';
+import '../App.css'; // Ensure this path is correct for your project structure
 
 const AdminDashboard = () => {
   const [componentData, setComponentData] = useState({
@@ -10,113 +12,142 @@ const AdminDashboard = () => {
     technologies: '',
     tags: [],
   });
+  const [components, setComponents] = useState([]); // To store the components
   const [userRole, setUserRole] = useState(null); // To store the user's role
   const navigate = useNavigate();
-useEffect(() => {
-  const fetchUserRole = async () => {
-    try {
-      // ... (token retrieval)
 
-      const response = await axios.get('/api/auth/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('API Response:', response.data); // Log the response
-      setUserRole(response.data.role); // Access the role from the response
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const token = getCurrentUser(); // Get the token from local storage
+        if (!token) {
+          navigate('/login'); // Redirect to login if no token
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/auth', { // Correct API call
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('API Response:', response.data); // Log the response
+        setUserRole(response.data.role); // Set the role from the response
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+        navigate('/login'); // Redirect to login on error
+      }
+    };
+    fetchUserRole();
+    fetchComponents(); // Fetch components when the component mounts
+  }, [navigate]);
+
+  const fetchComponents = async () => {
+    try {
+      const fetchedComponents = await getComponents(); // Fetch components from the server
+      setComponents(fetchedComponents);
     } catch (error) {
-      // ...
+      console.error('Error fetching components:', error);
     }
   };
-  fetchUserRole();
-}, [navigate]);
-  const handleModifyComponent = (e) => {
-    setComponentData({ ...componentData, [e.target.name]: e.target.value });
+
+  const handleModifyComponent = (componentId, updatedComponent) => {
+    setComponents((prevComponents) =>
+      prevComponents.map((component) =>
+        component._id === componentId ? updatedComponent : component
+      )
+    );
   };
+
   const handleAddComponent = async (e) => {
     e.preventDefault();
     try {
       await addComponent(componentData);
-      // Handle success, maybe clear the form, etc.
+      fetchComponents(); // Refresh the components list after adding a new component
       console.log('Component added successfully!');
     } catch (error) {
       console.error('Error adding component:', error);
     }
   };
+
   // Redirect if the user is not an admin
-  if (userRole !== 'admin') {
+  if (userRole && userRole !== 'admin') {
     return (
-      <div>
-        <h1>You do not have permission to access this page.</h1>
+      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r  from-gray-950 via-purple-950 to-gray-900 text-white">
+        <h1 className="text-2xl font-bold">You do not have permission to access this page.</h1>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl mb-4">Admin Dashboard</h1>
-      <form className="mb-4" onSubmit={handleAddComponent}>
+    <div className="flex flex-col items-center p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+      <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
+      <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
         <input
           type="text"
           placeholder="Name"
-          className="p-2 border border-gray-300 rounded mr-2"
-          value={newComponent.name}
-          onChange={(e) => setNewComponent({ ...newComponent, name: e.target.value })}
+          className="w-full p-2 mb-2 glass-input"
+          name="name"
+          value={componentData.name}
+          onChange={(e) => setComponentData({ ...componentData, name: e.target.value })}
         />
         <input
           type="text"
           placeholder="Use"
-          className="p-2 border border-gray-300 rounded mr-2"
-          value={newComponent.use}
-          onChange={(e) => setNewComponent({ ...newComponent, use: e.target.value })}
+          className="w-full p-2 mb-2 glass-input"
+          name="use"
+          value={componentData.use}
+          onChange={(e) => setComponentData({ ...componentData, use: e.target.value })}
         />
         <input
           type="text"
           placeholder="Technologies"
-          className="p-2 border border-gray-300 rounded mr-2"
-          value={newComponent.technologies}
-          onChange={(e) => setNewComponent({ ...newComponent, technologies: e.target.value })}
+          className="w-full p-2 mb-2 glass-input"
+          name="technologies"
+          value={componentData.technologies}
+          onChange={(e) => setComponentData({ ...componentData, technologies: e.target.value })}
         />
         <input
           type="text"
           placeholder="Tags"
-          className="p-2 border border-gray-300 rounded mr-2"
-          value={newComponent.tags}
-          onChange={(e) => setNewComponent({ ...newComponent, tags: e.target.value })}
+          className="w-full p-2 mb-2 glass-input"
+          name="tags"
+          value={componentData.tags.join(', ')}
+          onChange={(e) =>
+            setComponentData({ ...componentData, tags: e.target.value.split(',') })
+          }
         />
-        <button
-          className="p-2 bg-blue-500 text-white rounded"
-          type="submit"
-        >
+        <button className="w-full p-2 text-white rounded-lg glass-button" type="submit">
           Add Component
         </button>
       </form>
-      <div>
+
+      <div className="w-full max-w-lg">
         {components.map((component) => (
-          <div key={component._id} className="mb-4 p-4 border border-gray-300 rounded">
+          <div key={component._id} className="mb-4 p-4 glass-card">
             <input
               type="text"
-              className="p-2 border border-gray-300 rounded mr-2"
+              className="w-full p-2 mb-2 glass-input"
               value={component.name}
               onChange={(e) => handleModifyComponent(component._id, { ...component, name: e.target.value })}
             />
             <input
               type="text"
-              className="p-2 border border-gray-300 rounded mr-2"
+              className="w-full p-2 mb-2 glass-input"
               value={component.use}
               onChange={(e) => handleModifyComponent(component._id, { ...component, use: e.target.value })}
             />
             <input
               type="text"
-              className="p-2 border border-gray-300 rounded mr-2"
+              className="w-full p-2 mb-2 glass-input"
               value={component.technologies}
               onChange={(e) => handleModifyComponent(component._id, { ...component, technologies: e.target.value })}
             />
             <input
               type="text"
-              className="p-2 border border-gray-300 rounded mr-2"
+              className="w-full p-2 glass-input"
               value={component.tags.join(', ')}
-              onChange={(e) => handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })}
+              onChange={(e) =>
+                handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })
+              }
             />
           </div>
         ))}

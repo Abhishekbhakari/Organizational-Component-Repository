@@ -1,7 +1,10 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth/';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 // Single function to get the token
 const getToken = () => localStorage.getItem('token');
+
 // Axios instance with headers for authorization
 const instance = axios.create({
   baseURL: API_URL,
@@ -11,13 +14,11 @@ const instance = axios.create({
     'Authorization': `Bearer ${getToken()}`, // Use the single getToken() function
   },
 });
+
 export const addComponent = async (componentData) => {
   try {
-    // Always use getToken() to fetch the token
     const token = getToken();
     if (!token) {
-      // Handle case where no token is present, 
-      // potentially redirect to login
       console.error("No authentication token found. User may need to log in.");
       return;
     }
@@ -29,27 +30,22 @@ export const addComponent = async (componentData) => {
   }
 };
 
-export const getComponents = async (search) => {
+export const getComponents = async (searchTerm) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`/components?search=${search}`, {
-      headers: {
-        'x-auth-token': token,
-      },
-    });
-    return response.data;
+    const response = await instance.get(`/components?search=${searchTerm}`);
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Error fetching components:', error);
-    throw error;
+    return [];
   }
 };
 
 export const modifyComponent = async (id, componentData) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.put(`/components/${id}`, componentData, {
+    const token = getToken();
+    const response = await instance.put(`/components/${id}`, componentData, {
       headers: {
-        'x-auth-token': token,
+        'Authorization': `Bearer ${token}`,
       },
     });
     return response.data;
@@ -61,10 +57,10 @@ export const modifyComponent = async (id, componentData) => {
 
 export const getComponentById = async (id) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`/components/${id}`, {
+    const token = getToken();
+    const response = await instance.get(`/components/${id}`, {
       headers: {
-        'x-auth-token': token,
+        'Authorization': `Bearer ${token}`,
       },
     });
     return response.data;

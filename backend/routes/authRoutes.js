@@ -3,8 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
+const { auth, checkAdminRole } = require('../middleware/auth');
 const User = require('../models/User');
-const auth = require('../middleware/auth');
+
 
 // Registration route
 router.post(
@@ -15,6 +16,11 @@ router.post(
     check('role', 'Role is required').not().isEmpty()
   ],
   async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { username, password, role } = req.body;
 
     try {
@@ -37,7 +43,8 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id
+          id: user.id,
+          role: user.role // Including role in the payload
         }
       };
 
@@ -65,6 +72,11 @@ router.post(
     check('password', 'Password is required').exists()
   ],
   async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { username, password } = req.body;
 
     try {
@@ -82,7 +94,8 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id
+          id: user.id,
+          role: user.role // Including role in the payload
         }
       };
 
@@ -102,15 +115,18 @@ router.post(
   }
 );
 
-router.get('/', auth, async (req, res) => {
+// Get user info route (Protected route)
+router.get('/', auth, (req, res) => { // Correctly using auth as middleware
+  // Wrap async logic in a standard function
+  (async () => {
     try {
-      const user = await User.findById(req.user.id).select('-password'); // Fetch user
-      console.log('Sending user data:', user); // Log user data
-      res.json({ id: user.id, role: user.role }); // Include 'role' in response
+      const user = await User.findById(req.user.id).select('-password');
+      res.json({ id: user.id, role: user.role });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
     }
-  });
-
+  })(); 
+});
 module.exports = router;
+
