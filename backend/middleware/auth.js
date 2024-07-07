@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-// Function to check if the user has admin role
+// check if admin
 const checkAdminRole = (req, res, next) => {
   if (req.user.role === 'admin') {
-    next(); // Allow access if admin
+    next(); 
   } else {
     return res.status(403).json({ msg: 'Unauthorized: Only admins can perform this action.' });
   }

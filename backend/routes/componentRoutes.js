@@ -9,7 +9,6 @@ const {
 } = require('../controllers/componentController');
 const {auth ,checkAdminRole} = require('../middleware/auth'); 
 
-// Define routes
 router.get('/', auth, getComponents);
 router.get('/:id', auth, getComponentById);
 router.post('/', auth, checkAdminRole, (req, res) => { 

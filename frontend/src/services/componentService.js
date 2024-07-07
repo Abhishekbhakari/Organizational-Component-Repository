@@ -6,7 +6,7 @@ const getToken = () => localStorage.getItem('token');
 
 const instance = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${getToken()}`,

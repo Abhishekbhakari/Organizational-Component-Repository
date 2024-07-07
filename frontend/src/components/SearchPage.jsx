@@ -18,7 +18,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+    <div className="flex flex-col items-center min-h-screen p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h2 className="text-2xl md:text-4xl mb-8 font-bold">Search Components</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="glass-form mb-8 w-full max-w-lg">

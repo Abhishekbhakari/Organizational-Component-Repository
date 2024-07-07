@@ -7,7 +7,7 @@ const { auth, checkAdminRole } = require('../middleware/auth');
 const User = require('../models/User');
 
 
-// Registration route
+// Registration 
 router.post(
   '/register',
   [
@@ -44,7 +44,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
-          role: user.role // Including role in the payload
+          role: user.role 
         }
       };
 
@@ -64,7 +64,7 @@ router.post(
   }
 );
 
-// Login route
+// Login 
 router.post(
   '/login',
   [
@@ -95,7 +95,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
-          role: user.role // Including role in the payload
+          role: user.role 
         }
       };
 
@@ -115,9 +115,8 @@ router.post(
   }
 );
 
-// Get user info route (Protected route)
-router.get('/', auth, (req, res) => { // Correctly using auth as middleware
-  // Wrap async logic in a standard function
+// Get user info 
+router.get('/', auth, (req, res) => {
   (async () => {
     try {
       const user = await User.findById(req.user.id).select('-password');

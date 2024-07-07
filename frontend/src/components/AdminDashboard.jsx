@@ -58,10 +58,11 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteComponent = async (componentId) => {
+  const handleDeleteComponent = async (id) => {
     try {
-      await deleteComponent(componentId);
-      fetchComponents();
+      await deleteComponent(id);
+      setComponents(components.filter((component) => component._id !== id));
+      console.log('Component deleted successfully!');
     } catch (error) {
       console.error('Error deleting component:', error);
     }
@@ -80,14 +81,14 @@ const AdminDashboard = () => {
 
   if (userRole && userRole !== 'admin') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r  from-gray-950 via-purple-950 to-gray-900 text-white">
+      <div className="flex flex-col min-h-screen items-center justify-center h-screen bg-gradient-to-r  from-gray-950 via-purple-950 to-gray-900 text-white">
         <h1 className="text-2xl font-bold">You do not have permission to access this page.</h1>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+    <div className="flex flex-col min-h-screen items-center p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
       <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
         <input

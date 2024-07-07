@@ -10,13 +10,13 @@ const instance = axios.create({
   },
 });
 
-// Function to retrieve token from localStorage
+// retrieve token 
 const getToken = () => {
   const token = localStorage.getItem('token');
   return token ? `Bearer ${token}` : '';
 };
 
-// Axios interceptor to add Authorization header to requests
+//add Authorization header to requests
 instance.interceptors.request.use(
   (config) => {
     const token = getToken();
