@@ -1,5 +1,14 @@
 const Component = require('../models/Component');
 
+exports.getComponentsDashboard = async (req, res) => {
+  try {
+    const components = await Component.find();
+    res.json(components);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
 exports.getComponents = async (req, res) => {
   const searchTerm = req.query.search;
 

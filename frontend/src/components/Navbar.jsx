@@ -10,10 +10,10 @@ const Navbar = ({ isAuth, setAuth }) => {
 
   return (
     <nav className="crazy-navbar flex justify-between items-center p-6">
-      <div className="crazy-navbar-brand text-3xl font-bold text-white">
-        <Link to="/">MyApp</Link>
+      <div className="crazy-navbar-brand text-3xl  text-white font-mono font-thin drop-shadow-md ">
+        <Link to="/">repo_</Link>
       </div>
-      <div className="crazy-navbar-links space-x-6">
+      <div className=" flex crazy-navbar-links space-x-6">
         <Link to="/" className="crazy-link">Home</Link>
         {!isAuth ? (
           <>
