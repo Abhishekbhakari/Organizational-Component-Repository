@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
-import '../App.css'; // Ensure this path is correct for your project structure
+import '../App.css';
 
 const LoginPage = ({ setAuth }) => {
   const [username, setUsername] = useState('');

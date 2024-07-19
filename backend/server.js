@@ -5,19 +5,19 @@ const cors = require('cors');
 
 const app = express();
 
-// Load environment variables
+//env variables
 dotenv.config();
 
 // Connect Database
 connectDB();
 
-// Init Middleware
+//Middleware
 app.use(express.json({ extended: false }));
 app.use(cors());
 
 app.get('/', (req, res) => res.send('API Running'));
 
-// Define Routes
+// Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/components', require('./routes/componentRoutes'));
 

@@ -15,7 +15,7 @@ exports.getComponents = async (req, res) => {
   try {
     let components;
     if (searchTerm) {
-      const searchRegex = new RegExp(searchTerm, 'i'); // 'i' makes it case insensitive
+      const searchRegex = new RegExp(searchTerm, 'i'); 
       components = await Component.find({
         $or: [
           { name: searchRegex },
