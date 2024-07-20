@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
+// import { getAllUsers } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
@@ -11,8 +12,10 @@ const AdminDashboard = () => {
     use: '',
     technologies: '',
     tags: [],
+    codeSnippets: [],
   });
   const [components, setComponents] = useState([]);
+  const [users, setUsers] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
 
@@ -29,7 +32,6 @@ const AdminDashboard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('API Response:', response.data);
         setUserRole(response.data.role);
       } catch (error) {
         console.error('Error fetching user role:', error);
@@ -38,6 +40,7 @@ const AdminDashboard = () => {
     };
     fetchUserRole();
     fetchComponents();
+    fetchUsers();
   }, [navigate]);
 
   const fetchComponents = async () => {
@@ -46,6 +49,15 @@ const AdminDashboard = () => {
       setComponents(fetchedComponents);
     } catch (error) {
       console.error('Error fetching components:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const fetchedUsers = await getAllUsers();
+      setUsers(fetchedUsers);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
@@ -79,9 +91,22 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSnippetChange = (index, field, value) => {
+    const newSnippets = [...componentData.codeSnippets];
+    newSnippets[index] = { ...newSnippets[index], [field]: value };
+    setComponentData({ ...componentData, codeSnippets: newSnippets });
+  };
+
+  const addSnippetField = () => {
+    setComponentData({
+      ...componentData,
+      codeSnippets: [...componentData.codeSnippets, { language: '', code: '' }],
+    });
+  };
+
   if (userRole && userRole !== 'admin') {
     return (
-      <div className="flex flex-col min-h-screen items-center justify-center h-screen bg-gradient-to-r  from-gray-950 via-purple-950 to-gray-900 text-white">
+      <div className="flex flex-col min-h-screen items-center justify-center h-screen bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
         <h1 className="text-2xl font-bold">You do not have permission to access this page.</h1>
       </div>
     );
@@ -125,12 +150,32 @@ const AdminDashboard = () => {
             setComponentData({ ...componentData, tags: e.target.value.split(',') })
           }
         />
+        {componentData.codeSnippets.map((snippet, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              value={snippet.language}
+              onChange={(e) => handleSnippetChange(index, 'language', e.target.value)}
+              placeholder="Language"
+              className="w-full p-2 mb-2 glass-input"
+            />
+            <textarea
+              value={snippet.code}
+              onChange={(e) => handleSnippetChange(index, 'code', e.target.value)}
+              placeholder="Code"
+              className="w-full p-2 mb-2 glass-input"
+            ></textarea>
+          </div>
+        ))}
+        <button type="button" onClick={addSnippetField} className="w-full p-2 mb-2 glass-button">
+          Add Snippet Field
+        </button>
         <button className="w-full p-2 text-white rounded-lg glass-button" type="submit">
           Add Component
         </button>
       </form>
 
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg mb-8">
         {components.map((component) => (
           <div key={component._id} className="mb-4 p-4 glass-card">
             <input
@@ -173,6 +218,17 @@ const AdminDashboard = () => {
             </button>
           </div>
         ))}
+      </div>
+
+      <div className="w-full max-w-lg">
+        <h2 className="text-2xl mb-4 font-bold">Users</h2>
+        <ul>
+          {users.map((user) => (
+            <li key={user._id} className="mb-2 glass-card p-2">
+              {user.email}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

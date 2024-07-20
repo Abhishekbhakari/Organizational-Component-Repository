@@ -44,13 +44,14 @@ exports.getComponentById = async (req, res) => {
 };
 
 exports.createComponent = async (req, res) => {
-  const { name, use, technologies, tags } = req.body;
+  const { name, use, technologies, tags , codeSnippets } = req.body;
   try {
     const newComponent = new Component({
       name,
       use,
       technologies,
       tags,
+      codeSnippets,
     });
 
     const component = await newComponent.save();
@@ -61,7 +62,7 @@ exports.createComponent = async (req, res) => {
 };
 
 exports.updateComponent = async (req, res) => {
-  const { name, use, technologies, tags } = req.body;
+  const { name, use, technologies, tags , codeSnippets } = req.body;
   try {
     let component = await Component.findById(req.params.id);
     if (!component) return res.status(404).json({ msg: 'Component not found' });
@@ -70,6 +71,7 @@ exports.updateComponent = async (req, res) => {
     component.use = use || component.use;
     component.technologies = technologies || component.technologies;
     component.tags = tags || component.tags;
+    component.tags = codeSnippets || component.codeSnippets;
 
     component = await component.save();
     res.json(component);

@@ -23,6 +23,10 @@ const ComponentSchema = new mongoose.Schema({
       code: { type: String, required: true },
     },
   ],
+  ratings: { 
+    type: [Number],
+    default: [] 
+  }
 });
 
 module.exports = mongoose.model('Component', ComponentSchema);

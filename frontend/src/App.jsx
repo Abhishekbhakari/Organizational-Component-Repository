@@ -6,6 +6,7 @@ import RegisterPage from './components/RegisterPage';
 import DashboardPage from './components/DashboardPage';
 import AdminDashboard from './components/AdminDashboard';
 import SearchPage from './components/SearchPage';
+import ComponentDetails from './components/ComponentDetails';
 
 const App = () => {
   const [isAuth, setAuth] = useState(false);
@@ -24,6 +25,8 @@ const App = () => {
         <Route path="/register" element={<RegisterPage setAuth={setAuth} />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/components/:id" element={<ComponentDetails/>} />
+
       </Routes>
     </Router>
   );

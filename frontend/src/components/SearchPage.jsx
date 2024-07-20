@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getComponents } from '../services/componentService';
-import '../App.css'; 
+import '../App.css';
+
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [components, setComponents] = useState([]);
@@ -36,10 +37,13 @@ const SearchPage = () => {
       <table className="w-full max-w-4xl glass-table">
         <thead>
           <tr>
+           
             <th className="p-2">Name</th>
             <th className="p-2">Use</th>
             <th className="p-2">Technologies</th>
             <th className="p-2">Tags</th>
+            <th className="p-2">Rating</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -49,6 +53,11 @@ const SearchPage = () => {
               <td className="p-2">{component.use}</td>
               <td className="p-2">{component.technologies}</td>
               <td className="p-2">{component.tags.join(', ')}</td>
+              <td className="p-2">
+                {component.ratings.length
+                  ? (component.ratings.reduce((r, acc) => acc + r, 0) / component.ratings.length).toFixed(1)
+                  : 'N/A'}
+              </td>
             </tr>
           ))}
         </tbody>
