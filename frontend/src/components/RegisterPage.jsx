@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../services/authService';
+import { addNotification } from '../utils/notifications';
 import '../App.css'; 
 
 const RegisterPage = ({ setAuth }) => {
@@ -16,8 +17,10 @@ const RegisterPage = ({ setAuth }) => {
       localStorage.setItem('token', response.token);
       setAuth(true);
       navigate('/');
+      addNotification('Registered successfully!', 'success');
     } catch (error) {
       console.error('Error registering:', error);
+      addNotification(`Error : ${error.response.data}`, 'error');
       if (error.response) {
         console.error('Response data:', error.response.data);
       }

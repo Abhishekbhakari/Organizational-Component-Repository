@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { getComponents } from '../services/componentService';
 import '../App.css';
 
@@ -6,6 +7,7 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [components, setComponents] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     try {
@@ -49,7 +51,13 @@ const SearchPage = () => {
         <tbody>
           {components.map((component) => (
             <tr key={component._id} className="glass-card">
-              <td className="p-2">{component.name}</td>
+              <td className="p-2 border border-gray-300">
+                {/* Add the Link within the existing <td> */}
+                <Link to={`/components/${component._id}`} className="hover:underline"> 
+                  {component.name} 
+                </Link>
+              </td>
+              {/* <td className="p-2">{component.name}</td> */}
               <td className="p-2">{component.use}</td>
               <td className="p-2">{component.technologies}</td>
               <td className="p-2">{component.tags.join(', ')}</td>

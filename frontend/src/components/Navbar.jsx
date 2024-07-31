@@ -6,6 +6,7 @@ const Navbar = ({ isAuth, setAuth }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setAuth(false);
+    addNotification('Logged Out successfully!', 'success'); 
   };
 
   return (

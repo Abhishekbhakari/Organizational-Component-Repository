@@ -7,6 +7,8 @@ import DashboardPage from './components/DashboardPage';
 import AdminDashboard from './components/AdminDashboard';
 import SearchPage from './components/SearchPage';
 import ComponentDetails from './components/ComponentDetails';
+import { Toaster } from 'react-hot-toast'; // Import Toaster
+import { addNotification } from './utils/notifications';
 
 const App = () => {
   const [isAuth, setAuth] = useState(false);
@@ -28,6 +30,8 @@ const App = () => {
         <Route path="/components/:id" element={<ComponentDetails/>} />
 
       </Routes>
+      <Toaster
+       position="top-right" reverseOrder={false} /> 
     </Router>
   );
 };

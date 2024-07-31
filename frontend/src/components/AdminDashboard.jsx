@@ -4,6 +4,7 @@ import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
+import { addNotification } from '../utils/notifications'; 
 import '../App.css';
 
 const AdminDashboard = () => {
@@ -47,6 +48,7 @@ const AdminDashboard = () => {
     try {
       const fetchedComponents = await getComponentsDashboard();
       setComponents(fetchedComponents);
+
     } catch (error) {
       console.error('Error fetching components:', error);
     }
@@ -65,18 +67,21 @@ const AdminDashboard = () => {
     try {
       await modifyComponent(componentId, updatedComponent);
       fetchComponents();
+      addNotification('Component modified successfully!', 'success');
     } catch (error) {
       console.error('Error modifying component:', error);
+      addNotification('Error modifying component.', 'error');
     }
   };
 
   const handleDeleteComponent = async (id) => {
     try {
-      await deleteComponent(id);
-      setComponents(components.filter((component) => component._id !== id));
-      console.log('Component deleted successfully!');
+      await deleteComponent(id); // Call the deleteComponent function
+      setComponents(components.filter((component) => component._id !== id)); // Update the state
+      addNotification('Component deleted successfully!', 'success'); // Add notification
     } catch (error) {
       console.error('Error deleting component:', error);
+      addNotification('Error deleting component.', 'error'); // Add notification
     }
   };
 
@@ -86,8 +91,10 @@ const AdminDashboard = () => {
       await addComponent(componentData);
       fetchComponents();
       console.log('Component added successfully!');
+      addNotification('Component added successfully!', 'success'); 
     } catch (error) {
       console.error('Error adding component:', error);
+      addNotification('Error adding component.', 'error');
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import { addNotification } from '../utils/notifications';
 import '../App.css';
 
 const LoginPage = ({ setAuth }) => {
@@ -14,10 +15,13 @@ const LoginPage = ({ setAuth }) => {
       const response = await login(username, password);
       setAuth(true);
       navigate('/');
+      addNotification('Loggedin successfully!', 'success'); 
     } catch (error) {
       console.error('Error logging in:', error);
+      addNotification('Error logging in', 'error');
       if (error.response) {
         console.error('Response data:', error.response.data);
+        
       }
     }
   };
