@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
-// import { getAllUsers } from '../services/adminService';
+import { getAllUsers } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
@@ -39,6 +39,15 @@ const AdminDashboard = () => {
         navigate('/login');
       }
     };
+    const fetchData = async () => {
+      try {
+        await fetchComponents(); // Fetch components first
+        await fetchUsers();  // Fetch users second
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
     fetchUserRole();
     fetchComponents();
     fetchUsers();
@@ -53,11 +62,11 @@ const AdminDashboard = () => {
       console.error('Error fetching components:', error);
     }
   };
-
   const fetchUsers = async () => {
     try {
       const fetchedUsers = await getAllUsers();
-      setUsers(fetchedUsers);
+      console.log('Fetched Users:', fetchedUsers); 
+      setUsers(fetchedUsers); 
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -229,13 +238,22 @@ const AdminDashboard = () => {
 
       <div className="w-full max-w-lg">
         <h2 className="text-2xl mb-4 font-bold">Users</h2>
-        <ul>
-          {users.map((user) => (
-            <li key={user._id} className="mb-2 glass-card p-2">
-              {user.email}
-            </li>
-          ))}
-        </ul>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="p-2 border border-gray-300">Username</th>
+              <th className="p-2 border border-gray-300">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user._id} className="glass-card">
+                <td className="p-2 border border-gray-300">{user.username}</td>
+                <td className="p-2 border border-gray-300">{user.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
