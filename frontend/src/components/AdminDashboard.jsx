@@ -6,6 +6,11 @@ import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
 import { addNotification } from '../utils/notifications'; 
 import '../App.css';
+import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
+
 
 const AdminDashboard = () => {
   const [componentData, setComponentData] = useState({
@@ -19,6 +24,45 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
+
+  
+  const [pieChartData, setPieChartData] = useState({
+    labels: ['Users', 'Components'],
+    datasets: [
+      {
+        label: 'Count',
+        data: [users.length, components.length],
+        backgroundColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  });
+  const [barChartData, setBarChartData] = useState({
+    labels: ['Users', 'Components'],
+    datasets: [
+      {
+        label: 'Count',
+        data: [users.length, components.length],
+        backgroundColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  });
+
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -41,8 +85,29 @@ const AdminDashboard = () => {
     };
     const fetchData = async () => {
       try {
-        await fetchComponents(); // Fetch components first
-        await fetchUsers();  // Fetch users second
+        const fetchedUsers = await getAllUsers();
+        const fetchedComponents = await getComponentsDashboard();
+        // Update state of chart data..
+        setPieChartData({
+          ...pieChartData,
+          datasets: [
+            {
+              ...pieChartData.datasets[0],
+              data: [fetchedUsers.length, fetchedComponents.length], // Update 
+            },
+          ],
+        });
+        setBarChartData({
+          ...barChartData,
+          datasets: [
+            {
+              ...barChartData.datasets[0],
+              data: [fetchedUsers.length, fetchedComponents.length], // Update
+            },
+          ],
+        });
+        setUsers(fetchedUsers); 
+        setComponents(fetchedComponents);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -52,6 +117,7 @@ const AdminDashboard = () => {
     fetchComponents();
     fetchUsers();
   }, [navigate]);
+
 
   const fetchComponents = async () => {
     try {
@@ -129,8 +195,20 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen items-center p-8  bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+    <div className="flex flex-col min-h-screen items-center p-8   bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
+      <div className="w-full max-w-lg mb-8">
+        <h2 className="text-2xl mb-4 font-bold">Charts</h2>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-1/2">
+            <Pie data={pieChartData} />
+            <span data={pieChartData} >{fetchUsers.length}</span>
+          </div>
+          <div className="w-full md:w-1/2">
+            <Bar data={barChartData} />
+          </div>
+        </div>
+      </div>
       <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
         <input
           type="text"
@@ -190,28 +268,45 @@ const AdminDashboard = () => {
           Add Component
         </button>
       </form>
-
       <div className="w-full max-w-lg mb-8">
-        {components.map((component) => (
-          <div key={component._id} className="mb-4 p-4 glass-card">
+  <table className="w-full mb-4 glass-card">
+    <thead>
+      <tr>
+        <th className="p-2">Name</th>
+        <th className="p-2">Use</th>
+        <th className="p-2">Technologies</th>
+        <th className="p-2">Tags</th>
+        <th className="p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {components.map((component) => (
+        <tr key={component._id} className="border-t">
+          <td className="p-2">
             <input
               type="text"
-              className="w-full p-2 mb-2 glass-input"
+              className="w-full p-2 glass-input"
               value={component.name}
               onChange={(e) => handleModifyComponent(component._id, { ...component, name: e.target.value })}
             />
+          </td>
+          <td className="p-2">
             <input
               type="text"
-              className="w-full p-2 mb-2 glass-input"
+              className="w-full p-2 glass-input"
               value={component.use}
               onChange={(e) => handleModifyComponent(component._id, { ...component, use: e.target.value })}
             />
+          </td>
+          <td className="p-2">
             <input
               type="text"
-              className="w-full p-2 mb-2 glass-input"
+              className="w-full p-2 glass-input"
               value={component.technologies}
               onChange={(e) => handleModifyComponent(component._id, { ...component, technologies: e.target.value })}
             />
+          </td>
+          <td className="p-2">
             <input
               type="text"
               className="w-full p-2 glass-input"
@@ -220,8 +315,10 @@ const AdminDashboard = () => {
                 handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })
               }
             />
+          </td>
+          <td className="p-2">
             <button
-              className="w-full p-2 mt-2 text-white rounded-lg glass-button"
+              className="w-full p-2 mb-2 text-white rounded-lg glass-button"
               onClick={() => handleModifyComponent(component._id, component)}
             >
               Save Changes
@@ -232,9 +329,13 @@ const AdminDashboard = () => {
             >
               Delete
             </button>
-          </div>
-        ))}
-      </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
 
       <div className="w-full max-w-lg">
         <h2 className="text-2xl mb-4 font-bold">Users</h2>
