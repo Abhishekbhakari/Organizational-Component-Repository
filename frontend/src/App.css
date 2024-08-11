@@ -143,3 +143,11 @@ th, td {
   background-color: #e74c3c;
   color: white;
 }
+
+.dropzone{
+  text-align: center;
+  padding: 20px;
+  border: 3px blue dashed;
+  width: 60%;
+  margin: auto;
+}

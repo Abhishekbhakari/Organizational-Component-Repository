@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { getComponentById } from '../services/componentService';
 import { addNotification } from '../utils/notifications';
 import SyntaxHighlighter from 'react-syntax-highlighter';
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { useNavigate } from 'react-router-dom';
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/hljs';import { CopyToClipboard } from 'react-copy-to-clipboard';
 import '../App.css';
 
@@ -12,6 +14,7 @@ const ComponentDetailsPage = () => {
   const [snippet, setSnippet] = useState({ language: '', code: '' });
   const [rating, setRating] = useState(0);
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchComponent = async () => {
@@ -45,10 +48,19 @@ const ComponentDetailsPage = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen p-8 bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+       <button 
+                            className="absolute left-2 text-xl text-green-500"
+                            onClick={() => navigate(-1)}
+                        >
+                            <AiOutlineArrowLeft />
+                        </button>
       <div className="w-full max-w-lg glass-card">
         <h2 className='font-extrabold align-middle'>{component.name}</h2>
         <p className="p-2 mb-2">{component.use}</p>
         <p className="p-2 mb-2">{component.technologies}</p>
+        {component.image && ( // Check if image exists
+          <img src={component.image} alt={component.name} className="w-full max-h-48 object-contain" />
+        )}
         <div>
           {component.codeSnippets.map((snippet, index) => (
             <div key={index} className="relative mb-4">

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getComponents } from '../services/componentService';
 import '../App.css';
+import toast from 'react-hot-toast'; // Import toast library
+
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +12,17 @@ const SearchPage = () => {
   const navigate = useNavigate();
 
   const handleSearch = async () => {
+
+    const token = localStorage.getItem('token'); // Get token from local storage
+    if (!token) {
+      // User is not logged in
+      toast.error('Please login to search components', {
+        duration: 3000, // Customize duration as needed
+      });
+      navigate('/login'); // Redirect to login page
+      return;
+    }
+
     try {
       const data = await getComponents(searchTerm);
       setComponents(Array.isArray(data) ? data : []);

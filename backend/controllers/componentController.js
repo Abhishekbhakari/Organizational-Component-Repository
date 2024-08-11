@@ -44,20 +44,33 @@ exports.getComponentById = async (req, res) => {
 };
 
 exports.createComponent = async (req, res) => {
-  const { name, use, technologies, tags , codeSnippets } = req.body;
+  const { name, use, technologies, tags } = req.body;
+  const codeSnippets = JSON.parse(req.body.codeSnippets);
+  console.log("req.file:", req.file); 
+  const imageURL = req.file ? req.file.path : null; 
+
   try {
+    if (!req.file) {
+      return res.status(400).json({ msg: 'No image uploaded' }); 
+    }
+
     const newComponent = new Component({
-      name,
-      use,
-      technologies,
-      tags,
-      codeSnippets,
+      name, 
+      use, 
+      technologies, 
+      tags, 
+      codeSnippets, 
+      image: imageURL, 
     });
+
+    // Log the component data before saving
+    console.log("Saving new component:", newComponent); 
 
     const component = await newComponent.save();
     res.json(component);
   } catch (err) {
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error creating component:', err); // Log the error
+    res.status(500).json({ msg: 'Server error' }); 
   }
 };
 

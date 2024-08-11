@@ -26,7 +26,10 @@ const ComponentSchema = new mongoose.Schema({
   ratings: { 
     type: [Number],
     default: [] 
-  }
+  },
+  image: {
+    type: String, // Store the image URL as a string
+  },
 });
 
 module.exports = mongoose.model('Component', ComponentSchema);

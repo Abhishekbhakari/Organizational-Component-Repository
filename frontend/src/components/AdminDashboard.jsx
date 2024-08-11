@@ -8,6 +8,8 @@ import { addNotification } from '../utils/notifications';
 import '../App.css';
 import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
+import Dropzone from 'react-dropzone'; 
+
 
 ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
 
@@ -19,7 +21,9 @@ const AdminDashboard = () => {
     technologies: '',
     tags: [],
     codeSnippets: [],
+    image:null,
   });
+  const [showImageUpload, setShowImageUpload] = useState(false);
   const [components, setComponents] = useState([]);
   const [users, setUsers] = useState([]);
   const [userRole, setUserRole] = useState(null);
@@ -151,7 +155,7 @@ const AdminDashboard = () => {
 
   const handleDeleteComponent = async (id) => {
     try {
-      await deleteComponent(id); // Call the deleteComponent function
+      await deleteComponent(id);
       setComponents(components.filter((component) => component._id !== id)); // Update the state
       addNotification('Component deleted successfully!', 'success'); // Add notification
     } catch (error) {
@@ -163,8 +167,21 @@ const AdminDashboard = () => {
   const handleAddComponent = async (e) => {
     e.preventDefault();
     try {
-      await addComponent(componentData);
-      fetchComponents();
+      // Create FormData to send the image
+      const formData = new FormData();
+      formData.append('name', componentData.name);
+      formData.append('use', componentData.use);
+      formData.append('technologies', componentData.technologies);
+      formData.append('tags', JSON.stringify(componentData.tags));
+      formData.append('codeSnippets', JSON.stringify(componentData.codeSnippets)); 
+      formData.append('image', componentData.image);
+      const response = await axios.post('http://localhost:5000/api/components', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${getCurrentUser()}`,
+        },
+      });
+      fetchComponents(); 
       console.log('Component added successfully!');
       addNotification('Component added successfully!', 'success'); 
     } catch (error) {
@@ -186,6 +203,28 @@ const AdminDashboard = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    setComponentData({ ...componentData, image: e.target.files[0] });
+  };
+
+  const onDrop = (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    const fileSize = file.size / 1024 / 1024; // Size in MB
+    if (fileSize > 5) {
+      addNotification('File size exceeds 5MB limit', 'error');
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      addNotification('Please upload an image file', 'error');
+      return;
+    }
+    setComponentData({ ...componentData, image: file });
+    setShowImageUpload(false); 
+  };
+  const handleImageUploadClick = () => {
+    setShowImageUpload(true); // Show Dropzone
+  };
+
   if (userRole && userRole !== 'admin') {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center h-screen bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
@@ -195,11 +234,11 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen items-center p-8   bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
+    <div className="flex flex-col w-full min-h-screen items-center p-8   bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
-      <div className="w-full max-w-lg mb-8">
+      <div className="w-screen max-w-lg mb-36">
         <h2 className="text-2xl mb-4 font-bold">Charts</h2>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-20">
           <div className="w-full md:w-1/2">
             <Pie data={pieChartData} />
             <span data={pieChartData} >{fetchUsers.length}</span>
@@ -244,6 +283,21 @@ const AdminDashboard = () => {
             setComponentData({ ...componentData, tags: e.target.value.split(',') })
           }
         />
+         <button type="button" onClick={handleImageUploadClick} className="w-full p-2 mb-2 glass-button">
+          Add Image
+        </button>
+       {/* //Dropzone */}
+        {showImageUpload && ( 
+          <Dropzone onDrop={onDrop} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-gray-500 rounded" multiple={false}>
+            {({ getRootProps, getInputProps }) => (
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p className="text-center text-gray-500">Drag and drop an image here, or click to select one</p>
+              </div>
+            )}
+          </Dropzone>
+        )}
+
         {componentData.codeSnippets.map((snippet, index) => (
           <div key={index}>
             <input
