@@ -70,7 +70,6 @@ const SearchPage = () => {
                   {component.name} 
                 </Link>
               </td>
-              {/* <td className="p-2">{component.name}</td> */}
               <td className="p-2">{component.use}</td>
               <td className="p-2">{component.technologies}</td>
               <td className="p-2">{component.tags.join(', ')}</td>

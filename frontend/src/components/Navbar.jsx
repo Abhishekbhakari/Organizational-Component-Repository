@@ -16,6 +16,8 @@ const Navbar = ({ isAuth, setAuth }) => {
       </div>
       <div className=" flex crazy-navbar-links space-x-6">
         <Link to="/" className="crazy-link">Home</Link>
+        <Link to="/search" className="crazy-link">Search Components </Link>
+        <Link to="/admin" className="crazy-link">Dashboard</Link>
         {!isAuth ? (
           <>
             <Link to="/login" className="crazy-link">Login</Link>

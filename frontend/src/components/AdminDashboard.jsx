@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
 import { getAllUsers } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
+import {FaUsers} from "react-icons/fa";
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
 import { addNotification } from '../utils/notifications'; 
@@ -242,12 +243,14 @@ const AdminDashboard = () => {
           <div className="w-full md:w-1/2">
             <Pie data={pieChartData} />
             <span data={pieChartData} >{fetchUsers.length}</span>
+            <FaUsers className="text-yellow-500 text-5xl"/>
           </div>
           <div className="w-full md:w-1/2">
             <Bar data={barChartData} />
           </div>
         </div>
       </div>
+      <span>Create Components</span>
       <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
         <input
           type="text"
@@ -278,7 +281,7 @@ const AdminDashboard = () => {
           placeholder="Tags"
           className="w-full p-2 mb-2 glass-input"
           name="tags"
-          value={componentData.tags.join(', ')}
+          value={componentData.tags.join(',')}
           onChange={(e) =>
             setComponentData({ ...componentData, tags: e.target.value.split(',') })
           }
@@ -322,7 +325,8 @@ const AdminDashboard = () => {
           Add Component
         </button>
       </form>
-      <div className="w-full max-w-lg mb-8">
+      <div className="w-full max-w-4xl mb-8">
+        <span>Components</span>
   <table className="w-full mb-4 glass-card">
     <thead>
       <tr>
@@ -370,7 +374,7 @@ const AdminDashboard = () => {
               }
             />
           </td>
-          <td className="p-2">
+          <td className="p-2 ">
             <button
               className="w-full p-2 mb-2 text-white rounded-lg glass-button"
               onClick={() => handleModifyComponent(component._id, component)}
