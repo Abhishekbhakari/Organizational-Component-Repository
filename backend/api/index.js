@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const connectDB = require('../config/db');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
@@ -38,10 +38,10 @@ app.use(cors());
 app.get('/', (req, res) => res.send('API Running'));
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-const componentRoutes = require('./routes/componentRoutes');
+app.use('/api/auth', require('../routes/authRoutes'));
+const componentRoutes = require('../routes/componentRoutes');
 app.use('/api/components', upload.single('image'), componentRoutes);
-app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/admin', require('../routes/adminRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
