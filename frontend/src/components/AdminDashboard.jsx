@@ -237,15 +237,15 @@ const AdminDashboard = () => {
   return (
     <div className="flex flex-col w-full min-h-screen items-center p-8   bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
-      <div className="w-screen max-w-lg mb-36">
+      <div className="w-screen max-w-4xl  mb-36">
         <h2 className="text-2xl mb-4 font-bold">Charts</h2>
-        <div className="flex flex-col md:flex-row gap-20">
-          <div className="w-full md:w-1/2">
+        <div className=" w-full flex flex-col md:flex-row gap-20">
+          <div className="w-1/2 md:w-1/2">
             <Pie data={pieChartData} />
             <span data={pieChartData} >{fetchUsers.length}</span>
             <FaUsers className="text-yellow-500 text-5xl"/>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-1/2 md:w-1/2">
             <Bar data={barChartData} />
           </div>
         </div>

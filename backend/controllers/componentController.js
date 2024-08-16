@@ -10,28 +10,32 @@ exports.getComponentsDashboard = async (req, res) => {
 };
 
 exports.getComponents = async (req, res) => {
-  const searchTerm = req.query.search;
-
   try {
-    let components;
+    const searchTerm = req.query.name || '';
+    const technologies = req.query.technologies ? req.query.technologies.split(',') : [];
+    const tags = req.query.tags ? req.query.tags.split(',') : [];
+    const rating = req.query.rating ? parseFloat(req.query.rating) : null;
+    let query = Component.find();
     if (searchTerm) {
-      const searchRegex = new RegExp(searchTerm, 'i'); 
-      components = await Component.find({
-        $or: [
-          { name: searchRegex },
-          { use: searchRegex },
-          { technologies: searchRegex },
-          { tags: searchRegex },
-        ],
-      });
-    } else {
-      components = await Component.find();
+      query = query.where('name').regex(new RegExp(searchTerm, 'i'));
     }
+    if (technologies.length > 0) {
+      query = query.where('technologies').in(technologies);
+    }
+    if (tags.length > 0) {
+      query = query.where('tags').in(tags);
+    }
+    // If rating is not null, filter by rating
+    if (rating !== null) { 
+      query = query.where('ratings').elemMatch({ $gte: rating }); 
+    }
+    const components = await query.exec();
     res.json(components);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
 
 exports.getComponentById = async (req, res) => {
   try {

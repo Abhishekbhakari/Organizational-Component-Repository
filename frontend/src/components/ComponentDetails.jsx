@@ -5,6 +5,7 @@ import { addNotification } from '../utils/notifications';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
+import StarRatings from 'react-star-ratings';
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/hljs';import { CopyToClipboard } from 'react-copy-to-clipboard';
 import '../App.css';
 
@@ -34,15 +35,20 @@ const ComponentDetailsPage = () => {
     }
   };
 
-  const handleRateComponent = async () => {
+  const handleRatingChange = (newRating) => {
+    setRating(newRating); 
+  };
+  const saveRating = async () => {
     try {
-      const updatedComponent = await rateComponent(id, rating);
-      setComponent(updatedComponent);
-      addNotification('Component rated successfully!', 'success');
+      await updateComponent(id, { ratings: [...component.ratings, rating] });
+      addNotification('Rating saved successfully!', 'success');
+      // Optionally, update the component state or refetch the component after saving
     } catch (error) {
-      addNotification('Error rating component.', 'error');
+      addNotification('Error saving rating', 'error');
+      console.error('Error saving rating:', error);
     }
   };
+
 
   if (!component) return <div>Loading...</div>;
 
@@ -95,15 +101,18 @@ const ComponentDetailsPage = () => {
             Add Snippet
           </button>
         </div>
-        <div>
-          <input
-            type="number"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            className="w-full p-2 mb-2 glass-input"
+        <div className="mt-4">
+          <StarRatings
+            rating={rating}
+            starRatedColor="gold"
+            changeRating={handleRatingChange}
+            numberOfStars={5}
+            name="rating"
+            starDimension="20px"
+            starSpacing="5px"
           />
-          <button onClick={handleRateComponent} className="w-full p-2 bg-blue-500 text-white rounded-lg glass-button">
-            Rate Component
+          <button onClick={saveRating} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+            Save Rating
           </button>
         </div>
       </div>

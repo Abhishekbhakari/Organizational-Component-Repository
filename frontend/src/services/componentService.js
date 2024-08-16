@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'; // Correct import statement
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -28,15 +28,29 @@ export const addComponent = async (componentData) => {
   }
 };
 
-export const getComponents = async (searchTerm) => {
+export const getComponents = async (searchTerm, technologies, tags, rating) => {
   try {
-    const response = await instance.get(`/components?search=${searchTerm}`);
-    return Array.isArray(response.data) ? response.data : [];
+    let query = '';
+    if (searchTerm) {
+      query += `?name=${searchTerm}`;
+    }
+    if (technologies && technologies.length > 0) { 
+      query += `${query ? '&' : '?'}technologies=${technologies.join(',')}`;
+    }
+    if (tags && tags.length > 0) { 
+      query += `${query ? '&' : '?'}tags=${tags.join(',')}`;
+    }
+    // Only add the rating filter if it's not null
+    if (rating !== null) { 
+      query += `${query ? '&' : '?'}rating=${rating}`;
+    }
+    const response = await instance.get(`${API_URL}${query}`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching components:', error);
-    return [];
+    throw error; 
   }
 };
+
 
 export const getComponentsDashboard = async () => {
   try {
@@ -89,6 +103,15 @@ export const getComponentById = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching component by ID:', error);
+    throw error;
+  }
+};
+
+export const updateComponent = async (id, updatedComponent) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}`, updatedComponent);
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };
