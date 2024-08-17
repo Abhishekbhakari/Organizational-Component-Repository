@@ -257,6 +257,7 @@ const AdminDashboard = () => {
           placeholder="Name"
           className="w-full p-2 mb-2 glass-input"
           name="name"
+          required
           value={componentData.name}
           onChange={(e) => setComponentData({ ...componentData, name: e.target.value })}
         />

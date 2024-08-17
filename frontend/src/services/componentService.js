@@ -1,4 +1,4 @@
-import axios from 'axios'; // Correct import statement
+import axios from 'axios'; 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -30,21 +30,20 @@ export const addComponent = async (componentData) => {
 
 export const getComponents = async (searchTerm, technologies, tags, rating) => {
   try {
-    let query = '';
+    let config = {}; // Create an object to hold the configuration for the request
     if (searchTerm) {
-      query += `?name=${searchTerm}`;
+      config.params = { name: searchTerm }; // Add the search term to  params
     }
-    if (technologies && technologies.length > 0) { 
-      query += `${query ? '&' : '?'}technologies=${technologies.join(',')}`;
+    if (technologies && technologies.length > 0) {
+      config.params = { ...config.params, technologies: technologies.join(',') }; // Add technologies to params
     }
-    if (tags && tags.length > 0) { 
-      query += `${query ? '&' : '?'}tags=${tags.join(',')}`;
+    if (tags && tags.length > 0) {
+      config.params = { ...config.params, tags: tags.join(',') }; // Add tags params
     }
-    // Only add the rating filter if it's not null
-    if (rating !== null) { 
-      query += `${query ? '&' : '?'}rating=${rating}`;
+    if (rating !== null) {
+      config.params = { ...config.params, rating: rating }; // Add rating to params
     }
-    const response = await instance.get(`${API_URL}${query}`);
+    const response = await instance.get('/components', config); // Use the instance object
     return response.data;
   } catch (error) {
     throw error; 

@@ -42,7 +42,6 @@ const ComponentDetailsPage = () => {
     try {
       await updateComponent(id, { ratings: [...component.ratings, rating] });
       addNotification('Rating saved successfully!', 'success');
-      // Optionally, update the component state or refetch the component after saving
     } catch (error) {
       addNotification('Error saving rating', 'error');
       console.error('Error saving rating:', error);

@@ -9,19 +9,19 @@ const SearchPage = () => {
   const [components, setComponents] = useState([]);
   const [error, setError] = useState('');
   const [technologiesFilter, setTechnologiesFilter] = useState([]); // State for technologies filter
-  const [tagsFilter, setTagsFilter] = useState([]); // State for tags filter
   const [ratingFilter, setRatingFilter] = useState(null); // State for rating filter
   const navigate = useNavigate();
 
   const [uniqueTechnologies, setUniqueTechnologies] = useState([]);
-  const [uniqueTags, setUniqueTags] = useState([]);
 
   useEffect(() => {
     const fetchUniqueValues = async () => {
       try {
         const data = await getComponents(); // Fetch all components
-        setUniqueTechnologies(new Set(data.map(item => item.technologies)));
-        setUniqueTags(new Set(data.flatMap(item => item.tags)));
+        // Convert technologies to sets to remove duplicates
+        const uniqueTechs = new Set(data.map(item => item.technologies));
+        // Convert sets back to arrays
+        setUniqueTechnologies(Array.from(uniqueTechs));
       } catch (error) {
         console.error('Error fetching components:', error);
       }
@@ -40,9 +40,8 @@ const SearchPage = () => {
       return;
     }
     try {
-      // Fetch components with filters
-      //  We'll pass 'null' for rating when searching, so the backend can handle it accordingly.
-      const data = await getComponents(searchTerm, technologiesFilter, tagsFilter, null); 
+      // Fetch components with filters.
+      const data = await getComponents(searchTerm, technologiesFilter, null, null); 
       setComponents(Array.isArray(data) ? data : []);
       setError('');
     } catch (error) {
@@ -58,7 +57,7 @@ const SearchPage = () => {
       <div className="glass-form mb-8 w-full max-w-lg">
         <input
           type="text"
-          value={searchTerm}
+          value={searchTerm === null ? '' : searchTerm} 
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search..."
           className="w-full p-2 mb-4 glass-input"
@@ -73,34 +72,15 @@ const SearchPage = () => {
           onChange={(e) => setTechnologiesFilter(e.target.value ? [e.target.value] : [])} 
         >
           <option value="">All Technologies</option>
-          {uniqueTechnologies.map((tech) => (
+          {/* Check if uniqueTechnologies is an array before mapping */}
+          {Array.isArray(uniqueTechnologies) ? uniqueTechnologies.map((tech) => (
             <option key={tech} value={tech}>
               {tech}
             </option>
-          ))}
+          )) : (
+            <option value="">No Technologies Found</option> 
+          )}
         </select>
-
-        <div className="flex flex-col">
-          {uniqueTags.map((tag) => (
-            <div key={tag} className="flex items-center">
-              <input
-                type="checkbox"
-                id={tag}
-                checked={tagsFilter.includes(tag)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setTagsFilter([...tagsFilter, tag]);
-                  } else {
-                    setTagsFilter(tagsFilter.filter((t) => t !== tag));
-                  }
-                }}
-              />
-              <label htmlFor={tag} className="ml-2">
-                {tag}
-              </label>
-            </div>
-          ))}
-        </div>
 
         <input
           type="range"

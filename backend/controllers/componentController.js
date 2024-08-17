@@ -11,13 +11,13 @@ exports.getComponentsDashboard = async (req, res) => {
 
 exports.getComponents = async (req, res) => {
   try {
-    const searchTerm = req.query.name || '';
+    const searchTerm = req.query.name || ''; // Get the search term from the query
     const technologies = req.query.technologies ? req.query.technologies.split(',') : [];
     const tags = req.query.tags ? req.query.tags.split(',') : [];
     const rating = req.query.rating ? parseFloat(req.query.rating) : null;
-    let query = Component.find();
+    let query = Component.find(); // Start building the query
     if (searchTerm) {
-      query = query.where('name').regex(new RegExp(searchTerm, 'i'));
+      query = query.where('name').regex(new RegExp(searchTerm, 'i')); // Add the search term to the query
     }
     if (technologies.length > 0) {
       query = query.where('technologies').in(technologies);
@@ -29,7 +29,7 @@ exports.getComponents = async (req, res) => {
     if (rating !== null) { 
       query = query.where('ratings').elemMatch({ $gte: rating }); 
     }
-    const components = await query.exec();
+    const components = await query.exec(); // Execute the query
     res.json(components);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
@@ -88,7 +88,7 @@ exports.updateComponent = async (req, res) => {
     component.use = use || component.use;
     component.technologies = technologies || component.technologies;
     component.tags = tags || component.tags;
-    component.tags = codeSnippets || component.codeSnippets;
+    component.codeSnippets = codeSnippets || component.codeSnippets;
 
     component = await component.save();
     res.json(component);
