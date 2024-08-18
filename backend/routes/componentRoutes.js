@@ -15,7 +15,23 @@ router.get('/:id', auth, getComponentById);
 router.post('/', auth, checkAdminRole, (req, res) => { 
   createComponent(req, res); 
 });
-router.put('/:id', auth, updateComponent);
+router.put('/:id', async (req, res) => {
+  try {
+      const componentId = req.params.id;
+      const updatedData = req.body; 
+      const component = await Component.findByIdAndUpdate(componentId, { 
+          // Update the ratings array
+          $push: { ratings: updatedData.ratings } 
+      }, { new: true }); // Get the updated component
+      if (!component) {
+          return res.status(404).json({ msg: 'Component not found' });
+      }
+      res.json(component); // Send the updated component
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+  }
+});
 router.delete('/:id', auth, async (req, res) => {
   try {
     const component = await Component.findByIdAndDelete(req.params.id);

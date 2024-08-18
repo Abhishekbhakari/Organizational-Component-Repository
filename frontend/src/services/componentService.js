@@ -106,10 +106,10 @@ export const getComponentById = async (id) => {
   }
 };
 
-export const updateComponent = async (id, updatedComponent) => {
+export const updateComponent = async (componentId, updatedData) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, updatedComponent);
-    return response.data;
+    const response = await instance.put(`/components/${componentId}`, updatedData);
+    return response.data; // Returns the updated component data
   } catch (error) {
     throw error;
   }

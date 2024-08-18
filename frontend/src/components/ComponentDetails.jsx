@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getComponentById } from '../services/componentService';
+import { getComponentById ,updateComponent} from '../services/componentService';
 import { addNotification } from '../utils/notifications';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { AiOutlineArrowLeft } from "react-icons/ai";
@@ -38,9 +38,13 @@ const ComponentDetailsPage = () => {
   const handleRatingChange = (newRating) => {
     setRating(newRating); 
   };
+  
   const saveRating = async () => {
     try {
-      await updateComponent(id, { ratings: [...component.ratings, rating] });
+      // Await the updateComponent call
+      const updatedComponent = await updateComponent(id, { ratings: [...component.ratings, rating] }); 
+      // Update the component state with the updated component data
+      setComponent(updatedComponent); 
       addNotification('Rating saved successfully!', 'success');
     } catch (error) {
       addNotification('Error saving rating', 'error');
