@@ -5,7 +5,8 @@ const {
   getComponentById, 
   createComponent, 
   updateComponent, 
-  deleteComponent 
+  deleteComponent ,
+  addComment
 } = require('../controllers/componentController');
 const {auth ,checkAdminRole} = require('../middleware/auth'); 
 const Component = require('../models/Component');
@@ -22,11 +23,11 @@ router.put('/:id', async (req, res) => {
       const component = await Component.findByIdAndUpdate(componentId, { 
           // Update the ratings array
           $push: { ratings: updatedData.ratings } 
-      }, { new: true }); // Get the updated component
+      }, { new: true }); // Get updated component
       if (!component) {
           return res.status(404).json({ msg: 'Component not found' });
       }
-      res.json(component); // Send the updated component
+      res.json(component); // Send updated component
   } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -44,5 +45,7 @@ router.delete('/:id', auth, async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 },deleteComponent);
+
+router.put('/:id/comments',addComment);
 
 module.exports = router;

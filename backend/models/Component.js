@@ -27,6 +27,10 @@ const ComponentSchema = new mongoose.Schema({
     type: [Number],
     default: [] 
   },
+  comments: [{
+    text: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+  }],
   image: {
     type: String, // Store the image URL as a string
   },

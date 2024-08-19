@@ -250,8 +250,9 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      <span>Create Components</span>
+      <legend className=' font-jost font-bold'>Create Components</legend>
       <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
+        <label htmlFor="name ">Enter name of Component</label>
         <input
           type="text"
           placeholder="Name"
@@ -261,6 +262,7 @@ const AdminDashboard = () => {
           value={componentData.name}
           onChange={(e) => setComponentData({ ...componentData, name: e.target.value })}
         />
+        <label htmlFor="use">Enter Uses of Components</label>
         <input
           type="text"
           placeholder="Use"
@@ -269,6 +271,7 @@ const AdminDashboard = () => {
           value={componentData.use}
           onChange={(e) => setComponentData({ ...componentData, use: e.target.value })}
         />
+        <label htmlFor="technologies">Enter Technologies Used</label>
         <input
           type="text"
           placeholder="Technologies"
@@ -277,6 +280,7 @@ const AdminDashboard = () => {
           value={componentData.technologies}
           onChange={(e) => setComponentData({ ...componentData, technologies: e.target.value })}
         />
+        <label htmlFor="tags">Mention Tags for Component</label>
         <input
           type="text"
           placeholder="Tags"
@@ -322,78 +326,78 @@ const AdminDashboard = () => {
         <button type="button" onClick={addSnippetField} className="w-full p-2 mb-2 glass-button">
           Add Snippet Field
         </button>
-        <button className="w-full p-2 text-white rounded-lg glass-button" type="submit">
-          Add Component
+        <button className="w-full p-2 text-white rounded-lg glass-button border-lime-600" type="submit">
+          Create Component
         </button>
       </form>
       <div className="w-full max-w-4xl mb-8">
         <span>Components</span>
-  <table className="w-full mb-4 glass-card">
-    <thead>
-      <tr>
-        <th className="p-2">Name</th>
-        <th className="p-2">Use</th>
-        <th className="p-2">Technologies</th>
-        <th className="p-2">Tags</th>
-        <th className="p-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {components.map((component) => (
-        <tr key={component._id} className="border-t">
-          <td className="p-2">
-            <input
-              type="text"
-              className="w-full p-2 glass-input"
-              value={component.name}
-              onChange={(e) => handleModifyComponent(component._id, { ...component, name: e.target.value })}
-            />
-          </td>
-          <td className="p-2">
-            <input
-              type="text"
-              className="w-full p-2 glass-input"
-              value={component.use}
-              onChange={(e) => handleModifyComponent(component._id, { ...component, use: e.target.value })}
-            />
-          </td>
-          <td className="p-2">
-            <input
-              type="text"
-              className="w-full p-2 glass-input"
-              value={component.technologies}
-              onChange={(e) => handleModifyComponent(component._id, { ...component, technologies: e.target.value })}
-            />
-          </td>
-          <td className="p-2">
-            <input
-              type="text"
-              className="w-full p-2 glass-input"
-              value={component.tags.join(', ')}
-              onChange={(e) =>
-                handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })
-              }
-            />
-          </td>
-          <td className="p-2 ">
-            <button
-              className="w-full p-2 mb-2 text-white rounded-lg glass-button"
-              onClick={() => handleModifyComponent(component._id, component)}
-            >
-              Save Changes
-            </button>
-            <button
-              className="w-full p-2 mt-2 text-white rounded-lg glass-button bg-red-500"
-              onClick={() => handleDeleteComponent(component._id)}
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+      <table className="w-full mb-4 glass-card">
+        <thead>
+          <tr>
+            <th className="p-2">Name</th>
+            <th className="p-2">Use</th>
+            <th className="p-2">Technologies</th>
+            <th className="p-2">Tags</th>
+            <th className="p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {components.map((component) => (
+            <tr key={component._id} className="border-t">
+              <td className="p-2">
+                <input
+                  type="text"
+                  className="w-full p-2 glass-input"
+                  value={component.name}
+                  onChange={(e) => handleModifyComponent(component._id, { ...component, name: e.target.value })}
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="text"
+                  className="w-full p-2 glass-input"
+                  value={component.use}
+                  onChange={(e) => handleModifyComponent(component._id, { ...component, use: e.target.value })}
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="text"
+                  className="w-full p-2 glass-input"
+                  value={component.technologies}
+                  onChange={(e) => handleModifyComponent(component._id, { ...component, technologies: e.target.value })}
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="text"
+                  className="w-full p-2 glass-input"
+                  value={component.tags.join(', ')}
+                  onChange={(e) =>
+                    handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })
+                  }
+                />
+              </td>
+              <td className="p-2 ">
+                <button
+                  className="w-full p-2 mb-2 text-white rounded-lg glass-button border-lime-500"
+                  onClick={() => handleModifyComponent(component._id, component)}
+                >
+                  Save Changes
+                </button>
+                <button
+                  className="w-full p-2 mt-2 text-white rounded-lg glass-button bg-red-500 border-red-800"
+                  onClick={() => handleDeleteComponent(component._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
 
       <div className="w-full max-w-lg">

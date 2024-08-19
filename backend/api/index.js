@@ -33,9 +33,7 @@ cloudinary.config({
 
 //Middleware
 app.use(express.json({ extended: false }));
-app.use(cors({
-  origin: 'https://organizational-component-repository.vercel.app' 
-}));
+app.use(cors());
 
 app.get('/', (req, res) => res.send('API Running'));
 

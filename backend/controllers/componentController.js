@@ -108,3 +108,20 @@ exports.deleteComponent = async (req, res) => {
     res.status({ msg: 'Server error' });
   }
 };
+
+exports.addComment = async (req, res) => {
+  try {
+    const componentId = req.params.id;
+    const newComment = req.body.text;
+    const component = await Component.findByIdAndUpdate(componentId, {
+      $push: { comments: { text: newComment, createdAt: Date.now() } }
+    }, { new: true });
+    if (!component) {
+      return res.status(404).json({ msg: 'Component not found' });
+    }
+    res.json(component); 
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

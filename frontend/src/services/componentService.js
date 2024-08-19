@@ -114,3 +114,12 @@ export const updateComponent = async (componentId, updatedData) => {
     throw error;
   }
 };
+
+export const addComment = async (componentId, commentText) => {
+  try {
+    const response = await instance.put(`/components/${componentId}/comments`, { text: commentText });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
