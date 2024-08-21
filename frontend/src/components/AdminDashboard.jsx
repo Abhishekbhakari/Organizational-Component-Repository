@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
-import { getAllUsers } from '../services/adminService';
+import { getAllUsers, deleteUser } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
 import {FaUsers} from "react-icons/fa";
+import {  BsTrash } from "react-icons/bs";
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
 import { addNotification } from '../utils/notifications'; 
@@ -10,6 +11,7 @@ import '../App.css';
 import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
 import Dropzone from 'react-dropzone'; 
+// import { ConfirmDialog } from 'react-confirm-dialog'; 
 
 
 ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
@@ -26,6 +28,7 @@ const AdminDashboard = () => {
   });
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [components, setComponents] = useState([]);
+  const [editedComponent, setEditedComponent] = useState(null);
   const [users, setUsers] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
@@ -88,6 +91,7 @@ const AdminDashboard = () => {
         navigate('/login');
       }
     };
+    //fetch data for charts
     const fetchData = async () => {
       try {
         const fetchedUsers = await getAllUsers();
@@ -123,7 +127,7 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [navigate]);
 
-
+// featch components
   const fetchComponents = async () => {
     try {
       const fetchedComponents = await getComponentsDashboard();
@@ -143,25 +147,36 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleModifyComponent = async (componentId, updatedComponent) => {
+  const handleDeleteUser = async (userId) => {
     try {
-      await modifyComponent(componentId, updatedComponent);
-      fetchComponents();
+        await deleteUser(userId); 
+        setUsers(users.filter(user => user._id !== userId)); 
+        addNotification('User deleted successfully!', 'success');
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        addNotification('Error deleting user.', 'error');
+    }
+};
+
+  const handleModifyComponent = async (componentId) => {
+    try {
+      const updatedComponent = components.find(c => c._id === componentId); // Find component in the state
+      await modifyComponent(componentId, updatedComponent); // Send updated component to the server
+      fetchComponents(); // Re-fetch components to update the dashboard
       addNotification('Component modified successfully!', 'success');
     } catch (error) {
       console.error('Error modifying component:', error);
       addNotification('Error modifying component.', 'error');
     }
   };
-
   const handleDeleteComponent = async (id) => {
     try {
       await deleteComponent(id);
       setComponents(components.filter((component) => component._id !== id)); // Update the state
-      addNotification('Component deleted successfully!', 'success'); // Add notification
+      addNotification('Component deleted successfully!', 'success'); 
     } catch (error) {
       console.error('Error deleting component:', error);
-      addNotification('Error deleting component.', 'error'); // Add notification
+      addNotification('Error deleting component.', 'error'); 
     }
   };
 
@@ -185,6 +200,15 @@ const AdminDashboard = () => {
       fetchComponents(); 
       console.log('Component added successfully!');
       addNotification('Component added successfully!', 'success'); 
+      setComponentData({
+        name: '',
+        use: '',
+        technologies: '',
+        tags: [],
+        codeSnippets: [],
+        image: null,
+      });
+      setShowImageUpload(false); 
     } catch (error) {
       console.error('Error adding component:', error);
       addNotification('Error adding component.', 'error');
@@ -238,20 +262,33 @@ const AdminDashboard = () => {
     <div className="flex flex-col w-full min-h-screen items-center p-8   bg-gradient-to-r from-gray-950 via-purple-950 to-gray-900 text-white">
       <h1 className="text-2xl md:text-4xl mb-8 font-bold">Admin Dashboard</h1>
       <div className="w-screen max-w-4xl  mb-36">
+
+      {/* Display Charts */}
+
         <h2 className="text-2xl mb-4 font-bold">Charts</h2>
-        <div className=" w-full flex flex-col md:flex-row gap-20">
-          <div className="w-1/2 md:w-1/2">
+        <div className=" grid grid-cols-2 gap-5 m-auto mx-10">
+          <div className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
             <Pie data={pieChartData} />
-            <span data={pieChartData} >{fetchUsers.length}</span>
-            <FaUsers className="text-yellow-500 text-5xl"/>
           </div>
-          <div className="w-1/2 md:w-1/2">
+          <div className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950">
             <Bar data={barChartData} />
           </div>
+          <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
+            <FaUsers className="text-yellow-500 text-2xl mr-2" />
+             Users: {users.length}
+          </span>
+
+          <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
+            <i className="fas fa-cubes text-yellow-500 text-2xl mr-2"></i>
+            Components: {components.length}
+          </span>
         </div>
       </div>
+
+      {/* Form for Creating Components */}
+
       <legend className=' font-jost font-bold'>Create Components</legend>
-      <form className="mb-4 w-full max-w-lg glass-form" onSubmit={handleAddComponent}>
+      <form className="mb-4 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
         <label htmlFor="name ">Enter name of Component</label>
         <input
           type="text"
@@ -330,6 +367,9 @@ const AdminDashboard = () => {
           Create Component
         </button>
       </form>
+
+      {/* CRUD operations on components */}
+
       <div className="w-full max-w-4xl mb-8">
         <span>Components</span>
       <table className="w-full mb-4 glass-card">
@@ -350,7 +390,10 @@ const AdminDashboard = () => {
                   type="text"
                   className="w-full p-2 glass-input"
                   value={component.name}
-                  onChange={(e) => handleModifyComponent(component._id, { ...component, name: e.target.value })}
+                  onClick={() => handleModifyComponent(component._id)} onChange={(e) => {
+                    const updatedComponent = { ...component, name: e.target.value };
+                    setComponents(components.map(c => c._id === component._id ? updatedComponent : c));
+                  }}
                 />
               </td>
               <td className="p-2">
@@ -358,7 +401,10 @@ const AdminDashboard = () => {
                   type="text"
                   className="w-full p-2 glass-input"
                   value={component.use}
-                  onChange={(e) => handleModifyComponent(component._id, { ...component, use: e.target.value })}
+                  onChange={(e) => {
+                    const updatedComponent = { ...component, use: e.target.value };
+                    setComponents(components.map(c => c._id === component._id ? updatedComponent : c));
+                  }}
                 />
               </td>
               <td className="p-2">
@@ -366,7 +412,10 @@ const AdminDashboard = () => {
                   type="text"
                   className="w-full p-2 glass-input"
                   value={component.technologies}
-                  onChange={(e) => handleModifyComponent(component._id, { ...component, technologies: e.target.value })}
+                  onChange={(e) => {
+                    const updatedComponent = { ...component, technologies: e.target.value };
+                    setComponents(components.map(c => c._id === component._id ? updatedComponent : c));
+                  }}
                 />
               </td>
               <td className="p-2">
@@ -374,15 +423,16 @@ const AdminDashboard = () => {
                   type="text"
                   className="w-full p-2 glass-input"
                   value={component.tags.join(', ')}
-                  onChange={(e) =>
-                    handleModifyComponent(component._id, { ...component, tags: e.target.value.split(',') })
-                  }
+                  onChange={(e) => {
+                    const updatedComponent = { ...component, tags: e.target.value.split(',') };
+                    setComponents(components.map(c => c._id === component._id ? updatedComponent : c));
+                  }}
                 />
               </td>
               <td className="p-2 ">
                 <button
                   className="w-full p-2 mb-2 text-white rounded-lg glass-button border-lime-500"
-                  onClick={() => handleModifyComponent(component._id, component)}
+                  onClick={() => handleModifyComponent(component._id)}
                 >
                   Save Changes
                 </button>
@@ -399,14 +449,16 @@ const AdminDashboard = () => {
       </table>
     </div>
 
+{/* // featch Users */}
 
       <div className="w-full max-w-lg">
         <h2 className="text-2xl mb-4 font-bold">Users</h2>
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-indigo-500 rounded-md">
           <thead>
             <tr>
               <th className="p-2 border border-gray-300">Username</th>
               <th className="p-2 border border-gray-300">Role</th>
+              <th className="p-2 border border-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -414,6 +466,14 @@ const AdminDashboard = () => {
               <tr key={user._id} className="glass-card">
                 <td className="p-2 border border-gray-300">{user.username}</td>
                 <td className="p-2 border border-gray-300">{user.role}</td>
+                <td className="p-2 border border-gray-300">
+                  <button 
+                    className="bg-red-500 hover:bg-red-600 transition-all ease-in-out duration-300 text-xl py-2 px-4 rounded-md font-bold"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    <BsTrash />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
