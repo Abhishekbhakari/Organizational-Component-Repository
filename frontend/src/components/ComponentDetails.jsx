@@ -16,7 +16,7 @@ const ComponentDetailsPage = () => {
   const [snippet, setSnippet] = useState({ language: '', code: '' });
   const [rating, setRating] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [newComment, setNewComment] = useState(''); // State for new comments
+  const [newComment, setNewComment] = useState(''); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,8 +55,8 @@ const ComponentDetailsPage = () => {
     event.preventDefault();
     try {
       const updatedComponent = await addComment(id, newComment);
-      setComponent(updatedComponent); // Update the component with the new comment
-      setNewComment(''); // Clear the comment input
+      setComponent(updatedComponent); 
+      setNewComment('');
       addNotification('Comment added successfully!', 'success');
     } catch (error) {
       addNotification('Error adding comment.', 'error');

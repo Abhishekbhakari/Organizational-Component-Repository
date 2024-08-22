@@ -11,7 +11,6 @@ import '../App.css';
 import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
 import Dropzone from 'react-dropzone'; 
-// import { ConfirmDialog } from 'react-confirm-dialog'; 
 
 
 ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
@@ -158,17 +157,27 @@ const AdminDashboard = () => {
     }
 };
 
-  const handleModifyComponent = async (componentId) => {
-    try {
-      const updatedComponent = components.find(c => c._id === componentId); // Find component in the state
-      await modifyComponent(componentId, updatedComponent); // Send updated component to the server
-      fetchComponents(); // Re-fetch components to update the dashboard
-      addNotification('Component modified successfully!', 'success');
-    } catch (error) {
-      console.error('Error modifying component:', error);
-      addNotification('Error modifying component.', 'error');
-    }
-  };
+const handleModifyComponent = async (componentId) => {
+  try {
+    console.log("Modifying component:", componentId); // Log the component ID
+    const updatedComponent = components.find(c => c._id === componentId);
+    console.log("Updated component data:", updatedComponent); // Log the data
+
+    // Send update request to the backend
+    const response = await modifyComponent(componentId, updatedComponent);
+
+    console.log("Response from server:", response); // Log the response
+
+    // Update the component list in state after successful update
+    fetchComponents(); // Re-fetch components
+
+    addNotification('Component modified successfully!', 'success');
+  } catch (error) {
+    console.error('Error modifying component:', error);
+    addNotification('Error modifying component.', 'error');
+  }
+};
+
   const handleDeleteComponent = async (id) => {
     try {
       await deleteComponent(id);

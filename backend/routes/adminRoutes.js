@@ -6,11 +6,11 @@ const User = require('../models/User');
 
 
 router.get('/users', /*auth, checkAdminRole,*/ getAllUsers);
-// DELETE /api/users/:userId 
+
 router.delete('/users/:userId', auth, checkAdminRole, async (req, res) => {
     try {
         const userId = req.params.userId;
-        console.log('Attempting to delete user with ID:', userId);
+        // console.log('Attempting to delete user with ID:', userId);
         
         // Find the user in the database
         const user = await User.findById(userId);

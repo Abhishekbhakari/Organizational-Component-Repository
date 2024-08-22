@@ -8,8 +8,8 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [components, setComponents] = useState([]);
   const [error, setError] = useState('');
-  const [technologiesFilter, setTechnologiesFilter] = useState([]); // State for technologies filter
-  const [ratingFilter, setRatingFilter] = useState(null); // State for rating filter
+  const [technologiesFilter, setTechnologiesFilter] = useState([]);
+  const [ratingFilter, setRatingFilter] = useState(null);
   const navigate = useNavigate();
 
   const [uniqueTechnologies, setUniqueTechnologies] = useState([]);
@@ -17,7 +17,7 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchUniqueValues = async () => {
       try {
-        const data = await getComponents(); // Fetch all components
+        const data = await getComponents(); 
         // Convert technologies to sets to remove duplicates
         const uniqueTechs = new Set(data.map(item => item.technologies));
         // Convert sets back to arrays
@@ -28,7 +28,7 @@ const SearchPage = () => {
     };
 
     fetchUniqueValues(); 
-  }, []); // Fetch unique values only once
+  }, []); 
 
   const handleSearch = async () => {
     const token = localStorage.getItem('token');

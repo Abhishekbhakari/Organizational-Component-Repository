@@ -18,21 +18,24 @@ router.post('/', auth, checkAdminRole, (req, res) => {
 });
 router.put('/:id', async (req, res) => {
   try {
-      const componentId = req.params.id;
-      const updatedData = req.body; 
-      const component = await Component.findByIdAndUpdate(componentId, { 
-          // Update the ratings array
-          $push: { ratings: updatedData.ratings } 
-      }, { new: true }); // Get updated component
-      if (!component) {
-          return res.status(404).json({ msg: 'Component not found' });
-      }
-      res.json(component); // Send updated component
+    const componentId = req.params.id;
+    const updatedData = req.body;
+    console.log("Received update data:", updatedData); 
+    // Update the component in  database and get updated document
+    const component = await Component.findByIdAndUpdate(componentId, updatedData, { new: true }); 
+
+    console.log("Updated component in database:", component); // Log updated component
+
+    if (!component) {
+      return res.status(404).json({ msg: 'Component not found' });
+    }
+    res.json(component); // Send the updated component
   } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
+    console.error('Error updating component:', err);
+    res.status(500).send('Server error');
   }
 });
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const component = await Component.findByIdAndDelete(req.params.id);
