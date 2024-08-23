@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
 import { getAllUsers, deleteUser } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
-import {FaUsers} from "react-icons/fa";
+import { FaLayerGroup, FaUsers} from "react-icons/fa";
 import {  BsTrash } from "react-icons/bs";
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
@@ -24,8 +24,10 @@ const AdminDashboard = () => {
     tags: [],
     codeSnippets: [],
     image:null,
+    imageName: '',
   });
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   const [components, setComponents] = useState([]);
   const [editedComponent, setEditedComponent] = useState(null);
   const [users, setUsers] = useState([]);
@@ -238,8 +240,25 @@ const handleModifyComponent = async (componentId) => {
   };
 
   const handleImageChange = (e) => {
-    setComponentData({ ...componentData, image: e.target.files[0] });
+    setComponentData({ ...componentData, image: e.target.files[0],imageName: e.target.files[0].name, });
   };
+
+  const handleDeleteImage = () => {
+    setComponentData({
+      ...componentData,
+      image: null,
+      imageName: '',
+    });
+    setShowDeleteIcon(false);
+  };
+
+  useEffect(() => {
+    if (componentData.imageName) {
+      setShowDeleteIcon(true); 
+    } else {
+      setShowDeleteIcon(false);
+    }
+  }, [componentData.imageName]);
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -252,7 +271,7 @@ const handleModifyComponent = async (componentId) => {
       addNotification('Please upload an image file', 'error');
       return;
     }
-    setComponentData({ ...componentData, image: file });
+    setComponentData({ ...componentData, image: file, imageName: file.name });
     setShowImageUpload(false); 
   };
   const handleImageUploadClick = () => {
@@ -283,13 +302,12 @@ const handleModifyComponent = async (componentId) => {
             <Bar data={barChartData} />
           </div>
           <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
-            <FaUsers className="text-yellow-500 text-2xl mr-2" />
-             Users: {users.length}
+            
+            Users<span className='text-8xl flex gap-3'><FaUsers className="text-sky-600  mr-2" />{users.length}</span> 
           </span>
 
           <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
-            <i className="fas fa-cubes text-yellow-500 text-2xl mr-2"></i>
-            Components: {components.length}
+            Components <span className='text-8xl flex gap-3'><FaLayerGroup className=" text-yellow-500  mr-2" />{components.length}</span>
           </span>
         </div>
       </div>
@@ -298,38 +316,38 @@ const handleModifyComponent = async (componentId) => {
 
       <legend className=' font-jost font-bold'>Create Components</legend>
       <form className="mb-4 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
-        <label htmlFor="name ">Enter name of Component</label>
+        <label htmlFor="name ">Name</label>
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Enter name of Component"
           className="w-full p-2 mb-2 glass-input"
           name="name"
           required
           value={componentData.name}
           onChange={(e) => setComponentData({ ...componentData, name: e.target.value })}
         />
-        <label htmlFor="use">Enter Uses of Components</label>
+        <label htmlFor="use">Use</label>
         <input
           type="text"
-          placeholder="Use"
+          placeholder="Enter Uses of Components"
           className="w-full p-2 mb-2 glass-input"
           name="use"
           value={componentData.use}
           onChange={(e) => setComponentData({ ...componentData, use: e.target.value })}
         />
-        <label htmlFor="technologies">Enter Technologies Used</label>
+        <label htmlFor="technologies">Technologies</label>
         <input
           type="text"
-          placeholder="Technologies"
+          placeholder="Enter Technologies Used"
           className="w-full p-2 mb-2 glass-input"
           name="technologies"
           value={componentData.technologies}
           onChange={(e) => setComponentData({ ...componentData, technologies: e.target.value })}
         />
-        <label htmlFor="tags">Mention Tags for Component</label>
+        <label htmlFor="tags">Tags</label>
         <input
           type="text"
-          placeholder="Tags"
+          placeholder="Mention Tags for Component"
           className="w-full p-2 mb-2 glass-input"
           name="tags"
           value={componentData.tags.join(',')}
@@ -340,6 +358,15 @@ const handleModifyComponent = async (componentId) => {
          <button type="button" onClick={handleImageUploadClick} className="w-full p-2 mb-2 glass-button">
           Add Image
         </button>
+        {componentData.imageName && ( 
+          <p className="text-gray-500 flex justify-center">Selected Image: {componentData.imageName} 
+            {showDeleteIcon && ( // Show delete icon 
+              <span className="ml-2 cursor-pointer text-red-700 " onClick={handleDeleteImage}>
+                <BsTrash /> 
+              </span>
+            )}
+          </p>
+        )}
        {/* //Dropzone */}
         {showImageUpload && ( 
           <Dropzone onDrop={onDrop} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-gray-500 rounded" multiple={false}>

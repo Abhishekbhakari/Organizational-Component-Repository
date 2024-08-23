@@ -71,10 +71,10 @@ const SearchPage = () => {
           className="w-full p-2 mb-4 glass-input"
           onChange={(e) => setTechnologiesFilter(e.target.value ? [e.target.value] : [])} 
         >
-          <option value="">All Technologies</option>
+          <option value="" className=' text-gray-900'>All Technologies</option>
           {/* Check if uniqueTechnologies is an array before mapping */}
           {Array.isArray(uniqueTechnologies) ? uniqueTechnologies.map((tech) => (
-            <option key={tech} value={tech}>
+            <option key={tech} value={tech} className=' text-gray-900'>
               {tech}
             </option>
           )) : (

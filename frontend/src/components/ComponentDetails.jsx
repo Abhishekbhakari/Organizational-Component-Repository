@@ -13,7 +13,7 @@ import '../App.css';
 const ComponentDetailsPage = () => {
   const { id } = useParams();
   const [component, setComponent] = useState(null);
-  const [snippet, setSnippet] = useState({ language: '', code: '' });
+  // const [snippet, setSnippet] = useState({ language: '', code: '' });
   const [rating, setRating] = useState(0);
   const [copied, setCopied] = useState(false);
   const [newComment, setNewComment] = useState(''); 
@@ -27,15 +27,15 @@ const ComponentDetailsPage = () => {
     fetchComponent();
   }, [id]);
 
-  const handleAddSnippet = async () => {
-    try {
-      const updatedComponent = await addSnippet(id, snippet);
-      setComponent(updatedComponent);
-      addNotification('Snippet added successfully!', 'success');
-    } catch (error) {
-      addNotification('Error adding snippet.', 'error');
-    }
-  };
+  // const handleAddSnippet = async () => {
+  //   try {
+  //     const updatedComponent = await addSnippet(id, snippet);
+  //     setComponent(updatedComponent);
+  //     addNotification('Snippet added successfully!', 'success');
+  //   } catch (error) {
+  //     addNotification('Error adding snippet.', 'error');
+  //   }
+  // };
 
   const handleRatingChange = (newRating) => {
     setRating(newRating); 
@@ -74,9 +74,9 @@ const ComponentDetailsPage = () => {
           <AiOutlineArrowLeft />
         </button>
       <div className="w-full max-w-lg glass-card">
-        <h2 className='font-extrabold align-middle'>{component.name}</h2>
-        <p className="p-2 mb-2">{component.use}</p>
-        <p className="p-2 mb-2">{component.technologies}</p>
+        <h2 className=' text-3xl font-extrabold align-middle flex justify-center pb-4'>{component.name}</h2>
+        <p className="p-2 mb-2"><span className=' text-slate-400 font-bold'>Use -</span>{component.use}</p>
+        <p className="p-2 mb-2"><span className='text-slate-400 font-bold'>Technologies -</span>{component.technologies}</p>
         {component.image && ( 
           <img src={component.image} alt={component.name} className="w-full max-h-48 object-contain" />
         )}
@@ -96,7 +96,7 @@ const ComponentDetailsPage = () => {
             </div>
           ))}
         </div>
-        <div>
+        {/* <div>
           <input
             type="text"
             placeholder="Language"
@@ -113,7 +113,7 @@ const ComponentDetailsPage = () => {
           <button onClick={handleAddSnippet} className="w-full p-2 bg-blue-500 text-white rounded-lg glass-button">
             Add Snippet
           </button>
-        </div>
+        </div> */}
         <div className="mt-4">
           <StarRatings
             rating={rating}
