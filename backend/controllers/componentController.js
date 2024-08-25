@@ -67,45 +67,46 @@ exports.createComponent = async (req, res) => {
       image: imageURL, 
     });
 
-    // Log the component data before saving
     console.log("Saving new component:", newComponent); 
 
     const component = await newComponent.save();
     res.json(component);
   } catch (err) {
-    console.error('Error creating component:', err); // Log the error
+    console.error('Error creating component:', err); 
     res.status(500).json({ msg: 'Server error' }); 
   }
 };
 
-exports.updateComponent = async (req, res) => {
-  const { name, use, technologies, tags , codeSnippets } = req.body;
+exports.updateComponent =async (req, res) => {
   try {
-    let component = await Component.findById(req.params.id);
-    if (!component) return res.status(404).json({ msg: 'Component not found' });
+    const componentId = req.params.id;
+    const updatedData = req.body;
+    console.log("Received update data:", updatedData); 
+    // Update the component in  database and get updated document
+    const component = await Component.findByIdAndUpdate(componentId, updatedData, { new: true }); 
 
-    component.name = name || component.name;
-    component.use = use || component.use;
-    component.technologies = technologies || component.technologies;
-    component.tags = tags || component.tags;
-    component.codeSnippets = codeSnippets || component.codeSnippets;
+    console.log("Updated component in database:", component);
 
-    component = await component.save();
-    res.json(component);
+    if (!component) {
+      return res.status(404).json({ msg: 'Component not found' });
+    }
+    res.json(component); // Send the updated component
   } catch (err) {
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error updating component:', err);
+    res.status(500).send('Server error');
   }
 };
 
-exports.deleteComponent = async (req, res) => {
+exports.deleteComponent =  async (req, res) => {
   try {
-    const component = await Component.findById(req.params.id);
-    if (!component) return res.status(404).json({ msg: 'Component not found' });
-
-    await component.remove();
+    const component = await Component.findByIdAndDelete(req.params.id);
+    if (!component) {
+      return res.status(404).json({ msg: 'Component not found' });
+    }
     res.json({ msg: 'Component removed' });
   } catch (err) {
-    res.status({ msg: 'Server error' });
+    console.error('Error deleting component:', err);
+    res.status(500).json({ msg: 'Server error' });
   }
 };
 

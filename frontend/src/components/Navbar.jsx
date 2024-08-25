@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import '../App.css';
 
 const Navbar = ({ isAuth, setAuth }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setAuth(false);
-    addNotification('Logged Out successfully!', 'success'); 
+    toast.success('Logged Out successfully!'); 
   };
 
   return (

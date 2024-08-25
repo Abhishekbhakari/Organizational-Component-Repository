@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
 import { getAllUsers, deleteUser } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
-import { FaLayerGroup, FaUsers} from "react-icons/fa";
+import { FaLayerGroup, FaUsers ,FaRegSave} from "react-icons/fa";
 import {  BsTrash } from "react-icons/bs";
 import axios from 'axios';
 import { getCurrentUser } from '../services/authService';
@@ -11,6 +11,7 @@ import '../App.css';
 import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
 import Dropzone from 'react-dropzone'; 
+import toast from 'react-hot-toast';
 
 
 ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
@@ -118,6 +119,7 @@ const AdminDashboard = () => {
         });
         setUsers(fetchedUsers); 
         setComponents(fetchedComponents);
+        toast.success('Data featched Successfully!');
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -127,6 +129,14 @@ const AdminDashboard = () => {
     fetchComponents();
     fetchUsers();
   }, [navigate]);
+
+  useEffect(() => {
+    if (componentData.imageName) {
+      setShowDeleteIcon(true); 
+    } else {
+      setShowDeleteIcon(false);
+    }
+  }, [componentData.imageName]);
 
 // featch components
   const fetchComponents = async () => {
@@ -161,16 +171,15 @@ const AdminDashboard = () => {
 
 const handleModifyComponent = async (componentId) => {
   try {
-    console.log("Modifying component:", componentId); // Log the component ID
+    console.log("Modifying component:", componentId); // Log component ID
     const updatedComponent = components.find(c => c._id === componentId);
-    console.log("Updated component data:", updatedComponent); // Log the data
+    console.log("Updated component data:", updatedComponent); // Log data
 
     // Send update request to the backend
     const response = await modifyComponent(componentId, updatedComponent);
 
-    console.log("Response from server:", response); // Log the response
+    console.log("Response from server:", response);
 
-    // Update the component list in state after successful update
     fetchComponents(); // Re-fetch components
 
     addNotification('Component modified successfully!', 'success');
@@ -252,13 +261,7 @@ const handleModifyComponent = async (componentId) => {
     setShowDeleteIcon(false);
   };
 
-  useEffect(() => {
-    if (componentData.imageName) {
-      setShowDeleteIcon(true); 
-    } else {
-      setShowDeleteIcon(false);
-    }
-  }, [componentData.imageName]);
+
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -465,18 +468,18 @@ const handleModifyComponent = async (componentId) => {
                   }}
                 />
               </td>
-              <td className="p-2 ">
+              <td className="p-2 flex gap-3 justify-center align-middle">
                 <button
-                  className="w-full p-2 mb-2 text-white rounded-lg glass-button border-lime-500"
+                  className="w-full p-2 mb-2 text-white glass-button bg-lime-700 border-lime-500 transition-all ease-in-out duration-300 text-xl py-2 px-4 rounded-md font-bold"
                   onClick={() => handleModifyComponent(component._id)}
                 >
-                  Save Changes
+                  <FaRegSave />
                 </button>
                 <button
-                  className="w-full p-2 mt-2 text-white rounded-lg glass-button bg-red-500 border-red-800"
+                  className="w-full p-2 mt-2 text-white glass-button bg-red-500 border-red-800 transition-all ease-in-out duration-300 text-xl py-2 px-4 rounded-md font-bold"
                   onClick={() => handleDeleteComponent(component._id)}
                 >
-                  Delete
+                  <BsTrash />
                 </button>
               </td>
             </tr>
