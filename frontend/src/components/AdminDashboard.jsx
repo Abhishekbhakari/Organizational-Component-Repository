@@ -214,7 +214,7 @@ const handleModifyComponent = async (componentId) => {
       formData.append('tags', JSON.stringify(componentData.tags));
       formData.append('codeSnippets', JSON.stringify(componentData.codeSnippets)); 
       formData.append('image', componentData.image);
-      const response = await axios.post('http://localhost:5000/api/components', formData, {
+      const response = await axios.post('https://organizational-component-repository.onrender.com/api/components', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${getCurrentUser()}`,
