@@ -15,8 +15,6 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
-        // console.log('Attempting to delete user with ID:', userId);
-        
         // Find the user in the database
         const user = await User.findById(userId);
         if (!user) {

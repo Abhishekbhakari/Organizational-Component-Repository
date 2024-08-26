@@ -79,6 +79,9 @@ const AdminDashboard = () => {
       try {
         const token = getCurrentUser();
         if (!token) {
+          toast.error('Please login to access Dashboard', {
+            duration: 3000, 
+          });
           navigate('/login');
           return;
         }
@@ -306,19 +309,20 @@ const handleModifyComponent = async (componentId) => {
           </div>
           <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
             
-            Users<span className='text-8xl flex gap-3'><FaUsers className="text-sky-600  mr-2" />{users.length}</span> 
+            Users<span className='text-7xl flex gap-3 font-bold'><FaUsers className="text-sky-600  mr-2" />{users.length}</span> 
           </span>
 
           <span className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
-            Components <span className='text-8xl flex gap-3'><FaLayerGroup className=" text-yellow-500  mr-2" />{components.length}</span>
+            Components <span className='text-7xl flex gap-3 font-bold'><FaLayerGroup className=" text-yellow-500  mr-2" />{components.length}</span>
           </span>
         </div>
       </div>
 
       {/* Form for Creating Components */}
 
-      <legend className=' font-jost font-bold'>Create Components</legend>
+  
       <form className="mb-4 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
+        <h1 className=' align-middle'>Create Components</h1>
         <label htmlFor="name ">Name</label>
         <input
           type="text"
@@ -372,9 +376,9 @@ const handleModifyComponent = async (componentId) => {
         )}
        {/* //Dropzone */}
         {showImageUpload && ( 
-          <Dropzone onDrop={onDrop} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-gray-500 rounded" multiple={false}>
+          <Dropzone onDrop={onDrop}  multiple={false}>
             {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()}>
+              <div {...getRootProps()} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-gray-500 rounded">
                 <input {...getInputProps()} />
                 <p className="text-center text-gray-500">Drag and drop an image here, or click to select one</p>
               </div>
@@ -410,7 +414,7 @@ const handleModifyComponent = async (componentId) => {
       {/* CRUD operations on components */}
 
       <div className="w-full max-w-4xl mb-8">
-        <span>Components</span>
+        <span className='text-2xl md:text-4xl mb-8 font-bold'>Manage Components</span>
       <table className="w-full mb-4 glass-card">
         <thead>
           <tr>

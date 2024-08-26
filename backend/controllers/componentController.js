@@ -1,5 +1,6 @@
 const Component = require('../models/Component');
 
+//Display components on dashboard
 exports.getComponentsDashboard = async (req, res) => {
   try {
     const components = await Component.find();
@@ -9,6 +10,7 @@ exports.getComponentsDashboard = async (req, res) => {
   }
 };
 
+//Display components on Search Page
 exports.getComponents = async (req, res) => {
   try {
     const searchTerm = req.query.name || ''; // Get the search term from the query
@@ -36,7 +38,7 @@ exports.getComponents = async (req, res) => {
   }
 };
 
-
+//Compontent Details Page
 exports.getComponentById = async (req, res) => {
   try {
     const component = await Component.findById(req.params.id);

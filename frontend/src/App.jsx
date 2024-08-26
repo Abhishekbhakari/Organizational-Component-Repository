@@ -7,7 +7,7 @@ import DashboardPage from './components/DashboardPage';
 import AdminDashboard from './components/AdminDashboard';
 import SearchPage from './components/SearchPage';
 import ComponentDetails from './components/ComponentDetails';
-import { Toaster } from 'react-hot-toast'; // Import Toaster
+import { Toaster } from 'react-hot-toast'; 
 import { addNotification } from './utils/notifications';
 
 const App = () => {

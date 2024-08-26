@@ -41,7 +41,7 @@ const SearchPage = () => {
     }
     try {
       // Fetch components with filters.
-      const data = await getComponents(searchTerm, technologiesFilter, null, null); 
+      const data = await getComponents(searchTerm, technologiesFilter, null, ratingFilter); 
       setComponents(Array.isArray(data) ? data : []);
       setError('');
     } catch (error) {
