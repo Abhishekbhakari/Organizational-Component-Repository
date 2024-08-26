@@ -1,5 +1,5 @@
 {
     "jwtSecret": "your_jwt_secret",
-    "mongoURI": "mongodb+srv://abhishek:Wzvpvy2UHj0uoC93@cluster0.usiil.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    "mongoURI": "mongodb://localhost:27017/CORECO"
   }
   
