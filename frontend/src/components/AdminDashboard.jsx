@@ -85,7 +85,7 @@ const AdminDashboard = () => {
           navigate('/login');
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/auth', {
+        const response = await axios.get('https://organizational-component-repository.onrender.com/api/auth', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
