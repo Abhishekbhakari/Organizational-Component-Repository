@@ -53,6 +53,14 @@ const ComponentDetailsPage = () => {
 
   const handleSubmitComment = async (event) => {
     event.preventDefault();
+
+    // Validation: Check if the comment is empty
+  if (!newComment.trim()) {
+    addNotification('Comment cannot be empty', 'error');
+    return;
+  }
+
+
     try {
       const updatedComponent = await addComment(id, newComment);
       setComponent(updatedComponent); 

@@ -12,6 +12,7 @@ import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, 
 import { Pie, Bar } from 'react-chartjs-2';
 import Dropzone from 'react-dropzone'; 
 import toast from 'react-hot-toast';
+const API_URL = import.meta.env.VITE_API_URL
 
 
 ChartJS.register(ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale);
@@ -85,7 +86,7 @@ const AdminDashboard = () => {
           navigate('/login');
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/auth', {
+        const response = await axios.get('https://organizational-component-repository.onrender.com/api/auth', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -161,6 +162,15 @@ const AdminDashboard = () => {
     }
   };
 
+  // const featchComments = async () => {
+  //   try {
+  //     await featchComments();
+
+  //   } catch (error) {
+      
+  //   }
+  // }
+
   const handleDeleteUser = async (userId) => {
     try {
         await deleteUser(userId); 
@@ -174,13 +184,13 @@ const AdminDashboard = () => {
 
 const handleModifyComponent = async (componentId) => {
   try {
-    console.log("Modifying component:", componentId); // Log component ID
+    console.log("Modifying component:", componentId); 
     const updatedComponent = components.find(c => c._id === componentId);
-    console.log("Updated component data:", updatedComponent); // Log data
+    console.log("Updated component data:", updatedComponent);
 
     // Send update request to the backend
     const response = await modifyComponent(componentId, updatedComponent);
-
+ 
     console.log("Response from server:", response);
 
     fetchComponents(); // Re-fetch components
@@ -214,7 +224,7 @@ const handleModifyComponent = async (componentId) => {
       formData.append('tags', JSON.stringify(componentData.tags));
       formData.append('codeSnippets', JSON.stringify(componentData.codeSnippets)); 
       formData.append('image', componentData.image);
-      const response = await axios.post('http://localhost:5000/api/components', formData, {
+      const response = await axios.post('https://organizational-component-repository.onrender.com/api/components', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${getCurrentUser()}`,
@@ -299,7 +309,6 @@ const handleModifyComponent = async (componentId) => {
 
       {/* Display Charts */}
 
-        <h2 className="text-2xl mb-4 font-bold">Charts</h2>
         <div className=" grid grid-cols-2 gap-5 m-auto mx-10">
           <div className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
             <Pie data={pieChartData} />
@@ -317,12 +326,9 @@ const handleModifyComponent = async (componentId) => {
           </span>
         </div>
       </div>
-
       {/* Form for Creating Components */}
-
-  
-      <form className="mb-4 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
-        <h1 className=' align-middle'>Create Components</h1>
+      <form className="mb-6 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
+        <h1 className=' align-middle font-bold justify-center'>Create Components</h1>
         <label htmlFor="name ">Name</label>
         <input
           type="text"
@@ -378,7 +384,7 @@ const handleModifyComponent = async (componentId) => {
         {showImageUpload && ( 
           <Dropzone onDrop={onDrop}  multiple={false}>
             {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-gray-500 rounded">
+              <div {...getRootProps()} className=" w-full p-4 mb-2 glass-card border-2 border-dashed border-purple-500 rounded">
                 <input {...getInputProps()} />
                 <p className="text-center text-gray-500">Drag and drop an image here, or click to select one</p>
               </div>
@@ -414,7 +420,7 @@ const handleModifyComponent = async (componentId) => {
       {/* CRUD operations on components */}
 
       <div className="w-full max-w-4xl mb-8">
-        <span className='text-2xl md:text-4xl mb-8 font-bold'>Manage Components</span>
+        <span className='text-2xl md:text-2xl mb-8 font-bold '>Manage Components</span>
       <table className="w-full mb-4 glass-card">
         <thead>
           <tr>

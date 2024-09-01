@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import StarRatings from 'react-star-ratings';
+
 import { getComponents } from '../services/componentService';
 import '../App.css';
 import toast from 'react-hot-toast'; 
@@ -90,9 +92,9 @@ const SearchPage = () => {
           onChange={(e) => setRatingFilter(parseInt(e.target.value, 10))}
           className="w-full mb-4"
         />
-        <label htmlFor="ratingFilter">Minimum Rating:</label>
+        <label htmlFor="ratingFilter">Minimum Rating: {ratingFilter ? ratingFilter : '0'}</label>
       </div>
-      <table className="w-full max-w-4xl glass-table">
+      <table className="w-full max-w-6xl glass-table">
         <thead>
           <tr>
            
@@ -108,20 +110,25 @@ const SearchPage = () => {
           {components.map((component) => (
             <tr key={component._id} className="glass-card">
               <td className="p-2 border border-gray-300">
-                {/* Add the Link within the existing <td> */}
                 <Link to={`/components/${component._id}`} className="hover:underline"> 
                   {component.name} 
                 </Link>
               </td>
-              {/* <td className="p-2">{component.name}</td> */}
               <td className="p-2">{component.use}</td>
               <td className="p-2">{component.technologies}</td>
               <td className="p-2">{component.tags.join(', ')}</td>
               <td className="p-2">
-                {component.ratings.length
-                  ? (component.ratings.reduce((r, acc) => acc + r, 0) / component.ratings.length).toFixed(1)
-                  : 'N/A'}
-              </td>
+              {component.ratings.length ? (
+                <StarRatings
+                  rating={component.ratings.reduce((acc, r) => acc + r, 0) / component.ratings.length}
+                  starRatedColor="yellow"
+                  numberOfStars={5}
+                  starDimension="15px"  // Reduced size
+                  starSpacing="1px"
+                  name={`rating-${component._id}`}
+                />
+              ) : 'N/A'}
+            </td>
             </tr>
           ))}
         </tbody>
