@@ -132,7 +132,7 @@ const AdminDashboard = () => {
     fetchUserRole();
     fetchComponents();
     fetchUsers();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if (componentData.imageName) {
