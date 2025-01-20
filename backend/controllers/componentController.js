@@ -49,6 +49,7 @@ exports.getComponentById = async (req, res) => {
   }
 };
 
+//create component
 exports.createComponent = async (req, res) => {
   const { name, use, technologies, tags } = req.body;
   const codeSnippets = JSON.parse(req.body.codeSnippets);
@@ -93,7 +94,7 @@ exports.updateComponent =async (req, res) => {
       return res.status(404).json({ msg: 'Component not found' });
     }
     res.json(component); // Send the updated component
-  } catch (err) {
+  } catch (err) { 
     console.error('Error updating component:', err);
     res.status(500).send('Server error');
   }
@@ -115,16 +116,37 @@ exports.deleteComponent =  async (req, res) => {
 exports.addComment = async (req, res) => {
   try {
     const componentId = req.params.id;
-    const newComment = req.body.text;
-    const component = await Component.findByIdAndUpdate(componentId, {
-      $push: { comments: { text: newComment, createdAt: Date.now() } }
-    }, { new: true });
-    if (!component) {
-      return res.status(404).json({ msg: 'Component not found' });
+    const { text, parentId } = req.body;
+
+    console.log("Received comment data:", { text, parentId });
+
+    const newComment = { text, createdAt: Date.now(), replies: [] };
+
+    if (parentId) {
+      const component = await Component.findOneAndUpdate(
+        { _id: componentId, 'comments._id': parentId },
+        { $push: { 'comments.$.replies': newComment } },
+        { new: true }
+      );
+      if (!component) {
+        console.error('Component or parent comment not found');
+        return res.status(404).json({ msg: 'Component or parent comment not found' });
+      }
+      res.json(component);
+    } else {
+      const component = await Component.findByIdAndUpdate(
+        componentId,
+        { $push: { comments: newComment } },
+        { new: true }
+      );
+      if (!component) {
+        console.error('Component not found');
+        return res.status(404).json({ msg: 'Component not found' });
+      }
+      res.json(component);
     }
-    res.json(component); 
   } catch (err) {
-    console.error(err.message);
+    console.error('Error adding comment:', err.message);
     res.status(500).send('Server error');
   }
 };

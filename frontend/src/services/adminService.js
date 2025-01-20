@@ -17,7 +17,7 @@ export const getAllUsers = async () => {
 export const deleteUser = async (userId) => {
     try {
         console.log('deleteUser called with userId:', userId); 
-        const token = getCurrentUser(); // Ensure this returns just the token string
+        const token = getCurrentUser(); //  returns just the token string
         const response = await axios.delete(`${API_URL}admin/users/${userId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,

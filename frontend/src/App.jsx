@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy , Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
@@ -9,6 +9,7 @@ import SearchPage from './components/SearchPage';
 import ComponentDetails from './components/ComponentDetails';
 import { Toaster } from 'react-hot-toast'; 
 import { addNotification } from './utils/notifications';
+import NotFoundPage from './components/NotFoundPage';
 
 const App = () => {
   const [isAuth, setAuth] = useState(false);
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/components/:id" element={<ComponentDetails/>} />
+        {/* <Route path="/*" element={<NotFoundPage/>} /> */}
 
       </Routes>
       <Toaster

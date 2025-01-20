@@ -16,6 +16,7 @@ const ComponentDetailsPage = () => {
   // const [snippet, setSnippet] = useState({ language: '', code: '' });
   const [rating, setRating] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [replyTo, setReplyTo] = useState(null);
   const [newComment, setNewComment] = useState(''); 
   const navigate = useNavigate();
 
@@ -53,22 +54,33 @@ const ComponentDetailsPage = () => {
 
   const handleSubmitComment = async (event) => {
     event.preventDefault();
-
-    // Validation: Check if the comment is empty
-  if (!newComment.trim()) {
-    addNotification('Comment cannot be empty', 'error');
-    return;
-  }
-
-
+    if (!newComment.trim()) {
+      addNotification('Comment cannot be empty', 'error');
+      return;
+    }
     try {
-      const updatedComponent = await addComment(id, newComment);
-      setComponent(updatedComponent); 
+      const updatedComponent = await addComment(id, newComment, replyTo);
+      setComponent(updatedComponent);
       setNewComment('');
+      setReplyTo(null);
       addNotification('Comment added successfully!', 'success');
     } catch (error) {
       addNotification('Error adding comment.', 'error');
     }
+  };
+
+  const renderComments = (comments, parentId = null) => {
+    return comments.map((comment) => (
+      <div key={comment._id} className="mb-2 p-2 border border-gray-300 rounded">
+        <p>{comment.text}</p>
+        <button onClick={() => setReplyTo(comment._id)} className="text-blue-500">Reply</button>
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="ml-4">
+            {renderComments(comment.replies, comment._id)}
+          </div>
+        )}
+      </div>
+    ));
   };
 
   if (!component) return <div>Loading...</div>;
@@ -138,15 +150,7 @@ const ComponentDetailsPage = () => {
         </div>
         <div className="mt-4">
           <h3 className="font-bold">Comments/Questions</h3>
-          {component && component.comments && ( // Check if component and comments exist
-            <ul>
-              {component.comments.map((comment, index) => (
-                <li key={index} className="mb-2 p-2 border border-gray-300 rounded">
-                  {comment.text}
-                </li>
-              ))}
-            </ul>
-          )}
+          {component.comments && renderComments(component.comments)}
           <form onSubmit={handleSubmitComment} className="mt-4">
             <textarea
               value={newComment}
@@ -155,7 +159,7 @@ const ComponentDetailsPage = () => {
               className="w-full p-2 mb-2 glass-input"
             ></textarea>
             <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-lg glass-button">
-              Submit
+              {replyTo ? 'Reply' : 'Submit'}
             </button>
           </form>
         </div>

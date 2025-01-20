@@ -23,7 +23,7 @@ const LoginPage = ({ setAuth }) => {
         console.error('Response data:', error.response.data);
         
       }
-    }
+    } 
   };
 
   return (

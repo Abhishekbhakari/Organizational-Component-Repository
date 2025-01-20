@@ -1,6 +1,6 @@
 import axios from 'axios'; 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -115,9 +115,9 @@ export const updateComponent = async (componentId, updatedData) => {
   }
 };
 
-export const addComment = async (componentId, commentText) => {
+export const addComment = async (componentId, text, parentId = null) => {
   try {
-    const response = await instance.put(`/components/${componentId}/comments`, { text: commentText });
+    const response = await axios.put(`${API_URL}components/${componentId}/comments`, { text, parentId });
     return response.data;
   } catch (error) {
     throw error;

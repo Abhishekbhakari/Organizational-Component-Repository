@@ -12,25 +12,38 @@ const SearchPage = () => {
   const [error, setError] = useState('');
   const [technologiesFilter, setTechnologiesFilter] = useState([]);
   const [ratingFilter, setRatingFilter] = useState(null);
+  const [isAuth, setAuth] = useState(false);
+  const [uniqueTechnologies, setUniqueTechnologies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const componentsPerPage = 10;
+
   const navigate = useNavigate();
 
-  const [uniqueTechnologies, setUniqueTechnologies] = useState([]);
+  const indexOfLastComponent = currentPage * componentsPerPage;
+  const indexOfFirstComponent = indexOfLastComponent - componentsPerPage;
+  const currentComponents = components.slice(indexOfFirstComponent, indexOfLastComponent);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) setAuth(true); 
+  }, []);
 
   useEffect(() => {
     const fetchUniqueValues = async () => {
       try {
         const data = await getComponents(); 
-        // Convert technologies to sets to remove duplicates
         const uniqueTechs = new Set(data.map(item => item.technologies));
-        // Convert sets back to arrays
         setUniqueTechnologies(Array.from(uniqueTechs));
       } catch (error) {
         console.error('Error fetching components:', error);
       }
     };
-
-    fetchUniqueValues(); 
-  }, []); 
+    if (isAuth) {
+      fetchUniqueValues();
+    }
+  }, [isAuth]);
 
   const handleSearch = async () => {
     const token = localStorage.getItem('token');
@@ -42,7 +55,6 @@ const SearchPage = () => {
       return;
     }
     try {
-      // Fetch components with filters.
       const data = await getComponents(searchTerm, technologiesFilter, null, ratingFilter); 
       setComponents(Array.isArray(data) ? data : []);
       setError('');
@@ -94,45 +106,75 @@ const SearchPage = () => {
         />
         <label htmlFor="ratingFilter">Minimum Rating: {ratingFilter ? ratingFilter : '0'}</label>
       </div>
-      <table className="w-full max-w-6xl glass-table">
-        <thead>
+
+      {/* // components */}
+
+      {components.length > 0 && (
+        <>
+        <table className="w-full max-w-7xl glass-table">
+        <thead >
           <tr>
-           
             <th className="p-2">Name</th>
             <th className="p-2">Use</th>
             <th className="p-2">Technologies</th>
             <th className="p-2">Tags</th>
             <th className="p-2">Rating</th>
-            
           </tr>
         </thead>
         <tbody>
-          {components.map((component) => (
+          {currentComponents.map((component) => (
             <tr key={component._id} className="glass-card">
-              <td className="p-2 border border-gray-300">
-                <Link to={`/components/${component._id}`} className="hover:underline"> 
-                  {component.name} 
+              <td className="p-2 ">
+                <Link to={`/components/${component._id}`} className="hover:underline">
+                  {component.name}
                 </Link>
               </td>
               <td className="p-2">{component.use}</td>
               <td className="p-2">{component.technologies}</td>
               <td className="p-2">{component.tags.join(', ')}</td>
               <td className="p-2">
-              {component.ratings.length ? (
-                <StarRatings
-                  rating={component.ratings.reduce((acc, r) => acc + r, 0) / component.ratings.length}
-                  starRatedColor="yellow"
-                  numberOfStars={5}
-                  starDimension="15px"  // Reduced size
-                  starSpacing="1px"
-                  name={`rating-${component._id}`}
-                />
-              ) : 'N/A'}
-            </td>
+                {component.ratings.length ? (
+                  <StarRatings
+                    rating={component.ratings.reduce((acc, r) => acc + r, 0) / component.ratings.length}
+                    starRatedColor="yellow"
+                    numberOfStars={5}
+                    starDimension="15px"
+                    starSpacing="1px"
+                    name={`rating-${component._id}`}
+                  />
+                ) : 'N/A'}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="pagination flex gap-4 mt-4">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-2 m-1 border border-gray-300"
+        >
+          Previous
+        </button>
+        {Array.from({ length: Math.ceil(components.length / componentsPerPage) }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => paginate(i + 1)}
+            className={`p-2 m-1 border border-gray-300 ${currentPage === i + 1 ? 'bg-gray-300' : ''}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === Math.ceil(components.length / componentsPerPage)}
+          className="p-2 m-1 border border-gray-300"
+        >
+          Next
+        </button>
+      </div>
+      </>
+      )}
     </div>
   );
 };

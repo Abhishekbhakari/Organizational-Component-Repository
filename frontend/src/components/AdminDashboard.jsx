@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
-import { getAllUsers, deleteUser } from '../services/adminService';
 import { useNavigate } from 'react-router-dom';
-import { FaLayerGroup, FaUsers ,FaRegSave} from "react-icons/fa";
-import {  BsTrash } from "react-icons/bs";
+import { FaLayerGroup, FaUsers, FaRegSave } from "react-icons/fa";
+import { BsTrash } from "react-icons/bs";
 import axios from 'axios';
-import { getCurrentUser } from '../services/authService';
-import { addNotification } from '../utils/notifications'; 
-import '../App.css';
+import Dropzone from 'react-dropzone';
+import toast from 'react-hot-toast';
 import { Chart as ChartJS, ArcElement, CategoryScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, LinearScale } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
-import Dropzone from 'react-dropzone'; 
-import toast from 'react-hot-toast';
+
+import { addComponent, getComponentsDashboard, modifyComponent, deleteComponent } from '../services/componentService';
+import { getAllUsers, deleteUser } from '../services/adminService';
+import { getCurrentUser } from '../services/authService';
+import { addNotification } from '../utils/notifications';
+import Charts from './Charts';
+
+import '../App.css';
+
 const API_URL = import.meta.env.VITE_API_URL
 
 
@@ -86,7 +90,7 @@ const AdminDashboard = () => {
           navigate('/login');
           return;
         }
-        const response = await axios.get('https://organizational-component-repository.onrender.com/api/auth', {
+        const response = await axios.get('http://localhost:5000/api/auth', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -132,7 +136,7 @@ const AdminDashboard = () => {
     fetchUserRole();
     fetchComponents();
     fetchUsers();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if (componentData.imageName) {
@@ -150,7 +154,7 @@ const AdminDashboard = () => {
 
     } catch (error) {
       console.error('Error fetching components:', error);
-    }
+    }  
   };
   const fetchUsers = async () => {
     try {
@@ -224,7 +228,7 @@ const handleModifyComponent = async (componentId) => {
       formData.append('tags', JSON.stringify(componentData.tags));
       formData.append('codeSnippets', JSON.stringify(componentData.codeSnippets)); 
       formData.append('image', componentData.image);
-      const response = await axios.post('https://organizational-component-repository.onrender.com/api/components', formData, {
+      const response = await axios.post('http://localhost:5000/api/components', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${getCurrentUser()}`,
@@ -309,6 +313,8 @@ const handleModifyComponent = async (componentId) => {
 
       {/* Display Charts */}
 
+      {/* <Charts users={users} components={components} /> */}
+
         <div className=" grid grid-cols-2 gap-5 m-auto mx-10">
           <div className="flex flex-col items-center gap-10 p-5 shadow-lg rounded-md bg-purple-950 border-violet-400">
             <Pie data={pieChartData} />
@@ -325,7 +331,7 @@ const handleModifyComponent = async (componentId) => {
             Components <span className='text-7xl flex gap-3 font-bold'><FaLayerGroup className=" text-yellow-500  mr-2" />{components.length}</span>
           </span>
         </div>
-      </div>
+      </div> 
       {/* Form for Creating Components */}
       <form className="mb-6 w-full max-w-lg glass-form border-violet-500" onSubmit={handleAddComponent}>
         <h1 className=' align-middle font-bold justify-center'>Create Components</h1>
@@ -498,31 +504,31 @@ const handleModifyComponent = async (componentId) => {
       </table>
     </div>
 
-{/* // featch Users */}
+{/*featch Users */}
 
       <div className="w-full max-w-lg">
         <h2 className="text-2xl mb-4 font-bold">Users</h2>
         <table className="w-full border-collapse border border-indigo-500 rounded-md">
           <thead>
             <tr>
-              <th className="p-2 border border-gray-300">Username</th>
-              <th className="p-2 border border-gray-300">Role</th>
-              <th className="p-2 border border-gray-300">Actions</th>
+              <th className="p-2 ">Username</th>
+              <th className="p-2 ">Role</th>
+              <th className="p-2 ">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user._id} className="glass-card">
-                <td className="p-2 border border-gray-300">{user.username}</td>
-                <td className="p-2 border border-gray-300">{user.role}</td>
-                <td className="p-2 border border-gray-300">
+                <td className="p-2 ">{user.username}</td>
+                <td className="p-2 ">{user.role}</td>
+                <td className="p-2 ">
                   <button 
                     className="bg-red-500 hover:bg-red-600 transition-all ease-in-out duration-300 text-xl py-2 px-4 rounded-md font-bold"
                     onClick={() => handleDeleteUser(user._id)}
                   >
                     <BsTrash />
                   </button>
-                </td>
+                </td> 
               </tr>
             ))}
           </tbody>

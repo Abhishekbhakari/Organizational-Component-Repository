@@ -15,7 +15,7 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
-        // Find the user in the database
+        // Find user 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
